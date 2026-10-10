@@ -1,0 +1,30 @@
+gemini_model: "gemini-2.0-flash"
+timezone: "Asia/Kolkata"
+briefing_time: "07:30"
+dedupe_window_hours: 72
+coimbatore_lat: 11.0168
+coimbatore_lon: 76.9558
+db_path: "morning_brief.db"
+
+feeds:
+  - name: "The Hindu World"
+    category: "world"
+    url: "https://www.thehindu.com/news/international/feeder/default.rss"
+  - name: "The Hindu India"
+    category: "india"
+    url: "https://www.thehindu.com/news/national/feeder/default.rss"
+  - name: "The Hindu Tamil Nadu"
+    category: "tamil_nadu"
+    url: "https://www.thehindu.com/news/national/tamil-nadu/feeder/default.rss"
+  - name: "The Hindu Coimbatore"
+    category: "coimbatore"
+    url: "https://www.thehindu.com/news/cities/Coimbatore/feeder/default.rss"
+  - name: "Google News India"
+    category: "india"
+    url: "https://news.google.com/rss/search?q=India+when:1d&hl=en-IN&gl=IN&ceid=IN:en"
+  - name: "Google News Tamil Nadu"
+    category: "tamil_nadu"
+    url: "https://news.google.com/rss/search?q=Tamil+Nadu+when:1d&hl=en-IN&gl=IN&ceid=IN:en"
+  - name: "Google News Coimbatore"
+    category: "coimbatore"
+    url: "https://news.google.com/rss/search?q=Coimbatore+when:1d&hl=en-IN&gl=IN&ceid=IN:en"

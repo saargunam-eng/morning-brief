@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  morning_brief:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: morning_brief_service
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - morning_brief_data:/app/data
+
+volumes:
+  morning_brief_data:
+    driver: local
