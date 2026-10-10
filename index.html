@@ -181,6 +181,8 @@
             <button class="tab-btn" onclick="filterCategory('india', this)">🇮🇳 India & World</button>
             <button class="tab-btn" onclick="filterCategory('trending', this)">🔥 Trending</button>
             <button class="tab-btn" onclick="filterCategory('movies', this)">🎬 Movies</button>
+            <button class="tab-btn" onclick="filterCategory('sports', this)">🏏 Sports</button>
+            <button class="tab-btn" onclick="filterCategory('calendar', this)">📅 Calendar</button>
             <button class="tab-btn" onclick="filterCategory('astronomy', this)">🌌 Astronomy</button>
         </div>
 
@@ -198,6 +200,26 @@
             </div>
             <div class="card-grid" id="movies-grid">
                 <div class="loader"></div> <span style="color:var(--text-sub); margin-left:10px;">Loading Movies...</span>
+            </div>
+        </div>
+
+        <div id="sports-container" class="cat-section tab-sports" data-category="sports" style="display: none;">
+            <div class="cat-head">
+                <h2>🏏 Sports Headlines</h2>
+                <p>Latest updates from the world of Cricket</p>
+            </div>
+            <div class="card-grid" id="sports-grid">
+                <div class="loader"></div> <span style="color:var(--text-sub); margin-left:10px;">Loading Sports...</span>
+            </div>
+        </div>
+
+        <div id="calendar-container" class="cat-section tab-calendar" data-category="calendar" style="display: none;">
+            <div class="cat-head">
+                <h2>📅 Upcoming Holidays (India)</h2>
+                <p>Official public holidays</p>
+            </div>
+            <div class="card-grid" id="calendar-grid">
+                <div class="loader"></div> <span style="color:var(--text-sub); margin-left:10px;">Loading Calendar...</span>
             </div>
         </div>
 
@@ -236,6 +258,7 @@
                         <span>High: <strong>${data.max_temp}°C</strong></span>
                         <span>Low: <strong>${data.min_temp}°C</strong></span>
                         <span>Humidity: <strong>${data.humidity}%</strong></span>
+                        <span>AQI: <strong>${data.aqi || 'N/A'}</strong></span>
                     </div>
                 `;
             } catch (err) {
@@ -345,6 +368,10 @@
                     sec.style.display = 'block';
                 } else if (cat === 'movies' && secCat === 'movies') {
                     sec.style.display = 'block';
+                } else if (cat === 'sports' && secCat === 'sports') {
+                    sec.style.display = 'block';
+                } else if (cat === 'calendar' && secCat === 'calendar') {
+                    sec.style.display = 'block';
                 } else if (secCat === cat) {
                     sec.style.display = 'block';
                 } else {
@@ -423,6 +450,58 @@
             }
         }
 
+        async function fetchSports() {
+            try {
+                const res = await fetch('/api/sports');
+                const data = await res.json();
+                let html = '';
+                const articles = data.articles || [];
+                articles.slice(0, 5).forEach((item, idx) => {
+                    const title = item.headline || 'Sports News';
+                    const summary = item.description || title;
+                    const link = item.links?.web?.href || '#';
+                    
+                    html += `
+                    <article class="news-card">
+                        <div class="card-meta">
+                            <span class="card-num">#${idx + 1}</span>
+                            <span class="card-src">ESPN Cricket</span>
+                        </div>
+                        <h3 class="card-title"><a href="${link}" target="_blank" rel="noopener">${title}</a></h3>
+                        <p class="card-desc" style="-webkit-line-clamp:3;">${summary}</p>
+                    </article>`;
+                });
+                document.getElementById('sports-grid').innerHTML = html || '<p>No sports news found.</p>';
+            } catch (err) {
+                console.error("Sports error:", err);
+                document.getElementById('sports-grid').innerHTML = `<p style="color:red">Failed to load sports.</p>`;
+            }
+        }
+
+        async function fetchCalendar() {
+            try {
+                const res = await fetch('/api/calendar');
+                const data = await res.json();
+                let html = '';
+                // Filter upcoming
+                const today = new Date().toISOString().split('T')[0];
+                const upcoming = data.filter(d => d.date >= today).slice(0, 6);
+                
+                upcoming.forEach((item) => {
+                    html += `
+                    <article class="news-card">
+                        <h3 class="card-title" style="color: var(--accent-orange);">${item.date}</h3>
+                        <p class="card-desc" style="font-size:1.1rem; color:var(--text-main); font-weight:600;">${item.name}</p>
+                        <p class="card-desc">${item.localName}</p>
+                    </article>`;
+                });
+                document.getElementById('calendar-grid').innerHTML = html || '<p>No upcoming holidays found.</p>';
+            } catch (err) {
+                console.error("Calendar error:", err);
+                document.getElementById('calendar-grid').innerHTML = `<p style="color:red">Failed to load calendar.</p>`;
+            }
+        }
+
         // Initialize fetches on load
         window.onload = () => {
             fetchWeather();
@@ -430,6 +509,8 @@
             fetchNews();
             fetchMovies();
             fetchAstronomy();
+            fetchSports();
+            fetchCalendar();
         };
     </script>
 </body>

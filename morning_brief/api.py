@@ -44,6 +44,16 @@ async def api_weather():
         lon=settings.coimbatore_lon, 
         tz=settings.timezone
     )
+    
+    # Add Open-Meteo AQI (Free, no key)
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(f"https://air-quality-api.open-meteo.com/v1/air-quality?latitude={settings.coimbatore_lat}&longitude={settings.coimbatore_lon}&current=us_aqi")
+            aqi_data = resp.json()
+            data["aqi"] = aqi_data.get("current", {}).get("us_aqi", "N/A")
+    except Exception:
+        data["aqi"] = "N/A"
+        
     set_cache("weather", data)
     return data
 
@@ -53,6 +63,25 @@ async def api_markets():
     if cached: return cached
     
     data = await fetch_market_indicators()
+    
+    # Add Forex (USD to INR) via ExchangeRate-API (Free, no key)
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.get("https://open.er-api.com/v6/latest/USD")
+            rates = resp.json()
+            inr = rates.get("rates", {}).get("INR", 0)
+            if inr:
+                data.append({
+                    "symbol": "USDINR",
+                    "name": "USD / INR",
+                    "price": inr,
+                    "change": 0.0,
+                    "pct_change": 0.0,
+                    "is_up": True
+                })
+    except Exception:
+        pass
+
     set_cache("markets", data)
     return data
 
@@ -95,6 +124,37 @@ async def api_astronomy():
     result = {"sun": sun_data, "nasa": nasa_data}
     set_cache("astronomy", result)
     return result
+
+@app.get("/api/sports")
+async def api_sports():
+    cached = get_cached("sports")
+    if cached: return cached
+    
+    async with httpx.AsyncClient() as client:
+        # ESPN Free API for top sports news/scores (generic top headlines)
+        resp = await client.get("https://site.api.espn.com/apis/site/v2/sports/cricket/8039/news")
+        data = resp.json()
+        
+    set_cache("sports", data)
+    return data
+
+@app.get("/api/calendar")
+async def api_calendar():
+    cached = get_cached("calendar")
+    if cached: return cached
+    
+    async with httpx.AsyncClient() as client:
+        import datetime
+        year = datetime.datetime.now().year
+        # Nager.Date Public Holidays (Using US as fallback since IN might return 204)
+        resp = await client.get(f"https://date.nager.at/api/v3/PublicHolidays/{year}/US")
+        if resp.status_code == 200:
+            data = resp.json()
+        else:
+            data = []
+            
+    set_cache("calendar", data)
+    return data
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
