@@ -143,15 +143,21 @@ async def api_calendar():
     cached = get_cached("calendar")
     if cached: return cached
     
-    async with httpx.AsyncClient() as client:
-        import datetime
+    import datetime
+    try:
+        import holidays
         year = datetime.datetime.now().year
-        # Nager.Date Public Holidays (Using US as fallback since IN might return 204)
-        resp = await client.get(f"https://date.nager.at/api/v3/PublicHolidays/{year}/US")
-        if resp.status_code == 200:
-            data = resp.json()
-        else:
-            data = []
+        india_holidays = holidays.India(years=year)
+        
+        data = []
+        today = datetime.date.today()
+        for date, name in sorted(india_holidays.items()):
+            if date >= today:
+                data.append({"date": str(date), "name": name, "localName": name})
+                if len(data) >= 6:
+                    break
+    except ImportError:
+        data = []
             
     set_cache("calendar", data)
     return data
