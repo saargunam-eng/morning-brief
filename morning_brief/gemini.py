@@ -1,7 +1,7 @@
 import json
 import logging
 import re
-from typing import Dict, List, Optional, Set, Tuple
+
 import httpx
 
 logger = logging.getLogger("morning_brief.gemini")
@@ -33,7 +33,7 @@ Candidate News Items:
 """
 
 
-def create_non_ai_fallback(categorized_candidates: Dict[str, List[Dict]]) -> Dict[str, List[Dict]]:
+def create_non_ai_fallback(categorized_candidates: dict[str, list[dict]]) -> dict[str, list[dict]]:
     """Build a non-AI fallback briefing containing newest headlines per category."""
     fallback_result = {
         "world": [],
@@ -76,12 +76,12 @@ def clean_json_response(raw_text: str) -> str:
 
 
 def validate_and_sanitize_gemini_output(
-    parsed: Dict,
-    valid_urls: Set[str],
-) -> Dict[str, List[Dict]]:
+    parsed: dict,
+    valid_urls: set[str],
+) -> dict[str, list[dict]]:
     """Validate JSON keys, verify URLs exist in candidates, and enforce text limits."""
     categories = ["world", "india", "tamil_nadu", "coimbatore", "trending"]
-    sanitized: Dict[str, List[Dict]] = {cat: [] for cat in categories}
+    sanitized: dict[str, list[dict]] = {cat: [] for cat in categories}
 
     for cat in categories:
         items = parsed.get(cat, [])
@@ -128,10 +128,10 @@ def validate_and_sanitize_gemini_output(
 
 
 async def curate_with_gemini(
-    categorized_candidates: Dict[str, List[Dict]],
+    categorized_candidates: dict[str, list[dict]],
     api_key: str,
     model: str = "gemini-2.0-flash",
-) -> Tuple[Dict[str, List[Dict]], bool]:
+) -> tuple[dict[str, list[dict]], bool]:
     """
     Send candidates to Gemini Flash for editorial selection and formatting.
     Returns (curated_dict, gemini_used).
@@ -141,8 +141,8 @@ async def curate_with_gemini(
         return create_non_ai_fallback(categorized_candidates), False
 
     # Collect valid URLs and trim candidates (max 25 per category)
-    valid_urls: Set[str] = set()
-    trimmed_candidates: Dict[str, List[Dict]] = {}
+    valid_urls: set[str] = set()
+    trimmed_candidates: dict[str, list[dict]] = {}
 
     for cat, items in categorized_candidates.items():
         trimmed = items[:25]

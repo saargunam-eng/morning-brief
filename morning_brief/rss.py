@@ -1,29 +1,30 @@
 import asyncio
 import logging
 import re
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from time import mktime
-from typing import Dict, List, Tuple
+
 import feedparser
 import httpx
+
 from morning_brief.config import FeedConfig
 
 logger = logging.getLogger("morning_brief.rss")
 
 
-def parse_published_time(entry: Dict) -> datetime:
+def parse_published_time(entry: dict) -> datetime:
     """Extract and parse published timestamp into timezone-aware datetime."""
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     if hasattr(entry, "published_parsed") and entry.published_parsed:
         try:
-            dt = datetime.fromtimestamp(mktime(entry.published_parsed), tz=timezone.utc)
+            dt = datetime.fromtimestamp(mktime(entry.published_parsed), tz=UTC)
             return dt
         except Exception:
             pass
 
     if hasattr(entry, "updated_parsed") and entry.updated_parsed:
         try:
-            dt = datetime.fromtimestamp(mktime(entry.updated_parsed), tz=timezone.utc)
+            dt = datetime.fromtimestamp(mktime(entry.updated_parsed), tz=UTC)
             return dt
         except Exception:
             pass
@@ -36,7 +37,7 @@ async def fetch_single_feed(
     client: httpx.AsyncClient,
     feed_cfg: FeedConfig,
     max_age_hours: int = 24,
-) -> Tuple[str, List[Dict], bool]:
+) -> tuple[str, list[dict], bool]:
     """Fetch and parse a single RSS feed asynchronously."""
     category = feed_cfg.category
     source_name = feed_cfg.name
@@ -59,8 +60,8 @@ async def fetch_single_feed(
             logger.warning(f"Feed parser reported error for {source_name}: {parsed.bozo_exception}")
             return category, [], False
 
-        cutoff = datetime.now(timezone.utc) - timedelta(hours=max_age_hours)
-        items: List[Dict] = []
+        cutoff = datetime.now(UTC) - timedelta(hours=max_age_hours)
+        items: list[dict] = []
 
         for entry in parsed.entries:
             published_at = parse_published_time(entry)
@@ -111,12 +112,12 @@ async def fetch_single_feed(
         return category, [], False
 
 
-async def fetch_all_feeds(feeds: List[FeedConfig]) -> Tuple[Dict[str, List[Dict]], int, int]:
+async def fetch_all_feeds(feeds: list[FeedConfig]) -> tuple[dict[str, list[dict]], int, int]:
     """
     Fetch all RSS feeds in parallel with 15s timeout per request.
     Returns categorized candidates dictionary, success count, failure count.
     """
-    categorized_items: Dict[str, List[Dict]] = {
+    categorized_items: dict[str, list[dict]] = {
         "world": [],
         "india": [],
         "tamil_nadu": [],

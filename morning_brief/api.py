@@ -1,14 +1,14 @@
-import asyncio
 import time
+
+import httpx
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 
 from morning_brief.config import settings
+from morning_brief.markets import fetch_market_indicators
 from morning_brief.rss import fetch_all_feeds
 from morning_brief.weather import fetch_coimbatore_weather
-from morning_brief.markets import fetch_market_indicators
-import httpx
 
 app = FastAPI(title="Morning Brief API")
 

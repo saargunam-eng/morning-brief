@@ -2,8 +2,10 @@ import asyncio
 import logging
 import signal
 import sys
+
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
+
 from morning_brief.config import settings
 from morning_brief.main import run_briefing_pipeline
 

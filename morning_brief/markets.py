@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Dict, List
+
 import httpx
 
 logger = logging.getLogger("morning_brief.markets")
@@ -15,7 +15,7 @@ MARKET_SYMBOLS = [
 ]
 
 
-async def fetch_single_market_quote(client: httpx.AsyncClient, sym_info: Dict) -> Dict:
+async def fetch_single_market_quote(client: httpx.AsyncClient, sym_info: dict) -> dict:
     symbol = sym_info["symbol"]
     name = sym_info["name"]
     region = sym_info["region"]
@@ -67,7 +67,7 @@ async def fetch_single_market_quote(client: httpx.AsyncClient, sym_info: Dict) -
     }
 
 
-async def fetch_market_indicators() -> List[Dict]:
+async def fetch_market_indicators() -> list[dict]:
     """Fetch live financial market indices asynchronously."""
     async with httpx.AsyncClient() as client:
         tasks = [fetch_single_market_quote(client, sym) for sym in MARKET_SYMBOLS]

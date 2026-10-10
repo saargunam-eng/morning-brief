@@ -2,7 +2,6 @@ import logging
 import sqlite3
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
 
 logger = logging.getLogger("morning_brief.db")
 
@@ -56,13 +55,13 @@ def init_db(db_path: str) -> None:
         logger.info(f"Database initialized at {db_path}")
 
 
-def get_recent_sent_hashes_and_titles(db_path: str, hours: int = 72) -> Tuple[Set[str], List[str]]:
+def get_recent_sent_hashes_and_titles(db_path: str, hours: int = 72) -> tuple[set[str], list[str]]:
     """Retrieve hashes and normalized titles sent within the last N hours."""
     cutoff = datetime.utcnow() - timedelta(hours=hours)
     cutoff_str = cutoff.strftime("%Y-%m-%d %H:%M:%S")
 
-    sent_hashes: Set[str] = set()
-    sent_titles: List[str] = []
+    sent_hashes: set[str] = set()
+    sent_titles: list[str] = []
 
     with get_connection(db_path) as conn:
         cursor = conn.cursor()
@@ -77,7 +76,7 @@ def get_recent_sent_hashes_and_titles(db_path: str, hours: int = 72) -> Tuple[Se
     return sent_hashes, sent_titles
 
 
-def save_sent_items(db_path: str, items: List[Dict]) -> None:
+def save_sent_items(db_path: str, items: list[dict]) -> None:
     """Save newly sent items to SQLite."""
     if not items:
         return

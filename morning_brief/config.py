@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import List, Optional
+
 import yaml
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
@@ -35,7 +35,7 @@ class Settings(BaseModel):
     db_path: str = Field(default_factory=lambda: os.getenv("DB_PATH", "morning_brief.db"))
 
     # Configured RSS Feeds
-    feeds: List[FeedConfig] = [
+    feeds: list[FeedConfig] = [
         FeedConfig(
             name="Moneycontrol Markets",
             category="markets",

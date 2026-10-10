@@ -2,7 +2,7 @@ import asyncio
 import logging
 import sys
 import time
-from typing import Dict
+
 from morning_brief.config import settings
 from morning_brief.db import (
     get_recent_sent_hashes_and_titles,
@@ -45,7 +45,7 @@ async def run_briefing_pipeline() -> bool:
     categorized_raw, feed_success, feed_failure = await fetch_all_feeds(settings.feeds)
 
     # 4. Deduplicate items per category
-    categorized_deduped: Dict[str, list] = {}
+    categorized_deduped: dict[str, list] = {}
     total_candidates = 0
 
     for category, items in categorized_raw.items():

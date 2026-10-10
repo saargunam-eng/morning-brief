@@ -2,7 +2,6 @@ import html
 import logging
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from typing import Dict, List
 
 logger = logging.getLogger("morning_brief.formatter")
 
@@ -16,7 +15,7 @@ def escape_html(text: str) -> str:
 
 def format_category_section(
     title_header: str,
-    items: List[Dict],
+    items: list[dict],
     max_items: int = 5,
     is_bullet: bool = False,
 ) -> str:
@@ -42,8 +41,8 @@ def format_category_section(
 
 
 def build_telegram_html_message(
-    curated: Dict[str, List[Dict]],
-    weather: Dict,
+    curated: dict[str, list[dict]],
+    weather: dict,
     tz_name: str = "Asia/Kolkata",
 ) -> str:
     """

@@ -1,5 +1,5 @@
 import logging
-from typing import Dict
+
 import httpx
 
 logger = logging.getLogger("morning_brief.weather")
@@ -33,7 +33,7 @@ def interpret_wmo_code(code: int) -> str:
     return "Variable weather conditions expected today."
 
 
-async def fetch_coimbatore_weather(lat: float = 11.0168, lon: float = 76.9558, tz: str = "Asia/Kolkata") -> Dict:
+async def fetch_coimbatore_weather(lat: float = 11.0168, lon: float = 76.9558, tz: str = "Asia/Kolkata") -> dict:
     """Fetch current & forecast weather for Coimbatore from Open-Meteo API."""
     url = "https://api.open-meteo.com/v1/forecast"
     params = {

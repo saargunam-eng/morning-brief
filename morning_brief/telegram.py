@@ -1,5 +1,5 @@
 import logging
-from typing import Tuple
+
 import httpx
 
 logger = logging.getLogger("morning_brief.telegram")
@@ -9,7 +9,7 @@ async def send_telegram_message(
     bot_token: str,
     chat_id: str,
     text: str,
-) -> Tuple[bool, str]:
+) -> tuple[bool, str]:
     """
     Send an HTML formatted message via Telegram Bot API using httpx POST.
     Returns (success, response_message).

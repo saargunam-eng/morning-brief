@@ -1,7 +1,6 @@
 import hashlib
 import logging
 import re
-from typing import Dict, List, Set, Tuple
 from urllib.parse import urlparse
 
 logger = logging.getLogger("morning_brief.dedupe")
@@ -33,13 +32,13 @@ def create_url_hash(title: str, url: str) -> str:
     return hashlib.sha256(combined.encode("utf-8")).hexdigest()[:16]
 
 
-def get_meaningful_tokens(normalized_title: str) -> Set[str]:
+def get_meaningful_tokens(normalized_title: str) -> set[str]:
     """Extract non-stopword tokens from normalized title."""
     words = normalized_title.split()
     return {w for w in words if w not in STOPWORDS and len(w) > 1}
 
 
-def calculate_token_overlap(tokens1: Set[str], tokens2: Set[str]) -> float:
+def calculate_token_overlap(tokens1: set[str], tokens2: set[str]) -> float:
     """Calculate token overlap similarity ratio between two sets of tokens."""
     if not tokens1 or not tokens2:
         return 0.0
@@ -50,7 +49,7 @@ def calculate_token_overlap(tokens1: Set[str], tokens2: Set[str]) -> float:
 
 def is_near_duplicate_title(
     norm_title: str,
-    existing_titles: List[str],
+    existing_titles: list[str],
     threshold: float = 0.80,
 ) -> bool:
     """Check if normalized title shares > threshold token overlap with existing titles."""
@@ -67,18 +66,18 @@ def is_near_duplicate_title(
 
 
 def deduplicate_items(
-    items: List[Dict],
-    sent_hashes: Set[str],
-    sent_titles: List[str],
+    items: list[dict],
+    sent_hashes: set[str],
+    sent_titles: list[str],
     similarity_threshold: float = 0.80,
-) -> List[Dict]:
+) -> list[dict]:
     """
     Filter candidate items against DB history and intra-batch duplicates.
     Keeps higher quality / earlier items.
     """
-    unique_items: List[Dict] = []
-    seen_hashes: Set[str] = set(sent_hashes)
-    seen_titles: List[str] = list(sent_titles)
+    unique_items: list[dict] = []
+    seen_hashes: set[str] = set(sent_hashes)
+    seen_titles: list[str] = list(sent_titles)
 
     for item in items:
         norm_title = normalize_text(item.get("title", ""))
