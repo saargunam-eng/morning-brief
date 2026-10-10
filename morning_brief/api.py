@@ -9,6 +9,7 @@ from morning_brief.config import settings
 from morning_brief.markets import fetch_market_indicators
 from morning_brief.rss import fetch_all_feeds
 from morning_brief.weather import fetch_coimbatore_weather
+from morning_brief.trends import fetch_twitter_trends
 
 app = FastAPI(title="Morning Brief API")
 
@@ -166,6 +167,15 @@ async def api_calendar():
         data = []
             
     set_cache("calendar", data)
+    return data
+
+@app.get("/api/trends")
+async def api_trends():
+    cached = get_cached("twitter_trends")
+    if cached: return cached
+    
+    data = await fetch_twitter_trends()
+    set_cache("twitter_trends", data)
     return data
 
 @app.get("/", response_class=HTMLResponse)

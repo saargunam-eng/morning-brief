@@ -225,6 +225,7 @@
             <button class="tab-btn" onclick="filterCategory('markets', this)">📈 Markets</button>
             <button class="tab-btn" onclick="filterCategory('coimbatore', this)">🏙️ Local & TN</button>
             <button class="tab-btn" onclick="filterCategory('india', this)">🇮🇳 India & World</button>
+            <button class="tab-btn" onclick="filterCategory('tech', this)">💻 Tech & AI</button>
             <button class="tab-btn" onclick="filterCategory('trending', this)">🔥 Trending</button>
             <button class="tab-btn" onclick="filterCategory('movies', this)">🎬 Movies</button>
             <button class="tab-btn" onclick="filterCategory('sports', this)">🏏 Sports</button>
@@ -236,6 +237,16 @@
             <div class="loading-container">
                 <div class="loader"></div>
                 <p style="margin-top: 10px;">Aggregating live news and trends...</p>
+            </div>
+        </div>
+
+        <div id="x-trends-container" class="cat-section tab-trending" data-category="trending" style="display: none;">
+            <div class="cat-head" style="border-left-color: #1da1f2;">
+                <h2>🐦 X (Twitter) Trends</h2>
+                <p>Top engagement topics right now</p>
+            </div>
+            <div class="card-grid" id="x-trends-grid">
+                <div class="loader"></div> <span style="color:var(--text-sub); margin-left:10px;">Loading X Trends...</span>
             </div>
         </div>
 
@@ -388,7 +399,8 @@
             "tamil_nadu": ["🏛️ Tamil Nadu State", "State governance & policy", "tab-local"],
             "india": ["🇮🇳 India National", "Top national stories", "tab-national"],
             "world": ["🌍 World News", "Major global developments", "tab-national"],
-            "trending": ["🔥 Trending", "Top viral, tech & web trends", "tab-trending"],
+            "tech": ["💻 Tech & AI", "Fresh & latest tech news", "tab-tech"],
+            "trending": ["🔥 Search Trends", "Top Google searches", "tab-trending"],
         };
 
         async function fetchNews() {
@@ -443,7 +455,7 @@
                 // Re-trigger tab filtering based on active tab
                 const activeBtn = document.querySelector('.tab-btn.active');
                 if(activeBtn) {
-                    const catMap = ['all', 'markets', 'coimbatore', 'india', 'trending', 'movies', 'sports', 'calendar', 'astronomy'];
+                    const catMap = ['all', 'markets', 'coimbatore', 'india', 'tech', 'trending', 'movies', 'sports', 'calendar', 'astronomy'];
                     const activeIndex = Array.from(document.querySelectorAll('.tab-btn')).indexOf(activeBtn);
                     filterCategory(catMap[activeIndex] || 'all', activeBtn);
                 }
@@ -464,6 +476,8 @@
                 } else if (cat === 'coimbatore' && (secCat === 'coimbatore' || secCat === 'tamil_nadu')) {
                     sec.style.display = 'block';
                 } else if (cat === 'india' && (secCat === 'india' || secCat === 'world')) {
+                    sec.style.display = 'block';
+                } else if (cat === 'tech' && secCat === 'tech') {
                     sec.style.display = 'block';
                 } else if (cat === 'astronomy' && secCat === 'astronomy') {
                     sec.style.display = 'block';
@@ -611,6 +625,48 @@
             }
         }
 
+        async function fetchTwitterTrends() {
+            document.getElementById('x-trends-grid').innerHTML = getLoaderHtml("Loading X Trends...");
+            try {
+                const res = await fetch('/api/trends');
+                if (!res.ok) throw new Error("HTTP " + res.status);
+                const data = await res.json();
+                let html = '';
+                
+                const locations = [
+                    { id: 'tamil_nadu', title: 'Tamil Nadu (Chennai)' },
+                    { id: 'india', title: 'India' },
+                    { id: 'world', title: 'World' }
+                ];
+                
+                locations.forEach(loc => {
+                    const trends = data[loc.id] || [];
+                    if (trends.length === 0) return;
+                    
+                    let listHtml = '';
+                    trends.slice(0, 10).forEach((t, idx) => {
+                        listHtml += `<li style="margin-bottom:8px; display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:6px;">
+                            <a href="https://twitter.com${t.url}" target="_blank" rel="noopener" style="color:var(--text-main); text-decoration:none; font-weight:500;">
+                                <span style="color:var(--text-sub); margin-right:8px;">${idx + 1}.</span>${t.name}
+                            </a>
+                            <span style="color:var(--text-sub); font-size:0.8rem;">${t.tweet_count}</span>
+                        </li>`;
+                    });
+                    
+                    html += `
+                    <article class="news-card" style="padding:16px;">
+                        <h3 class="card-title" style="color:#1da1f2; margin-bottom:16px;">${loc.title}</h3>
+                        <ul style="list-style-type:none;">${listHtml}</ul>
+                    </article>`;
+                });
+                
+                document.getElementById('x-trends-grid').innerHTML = html || '<p>No X Trends found.</p>';
+            } catch (err) {
+                console.error("X Trends error:", err);
+                document.getElementById('x-trends-grid').innerHTML = getErrorHtml("Failed to load X Trends.", "fetchTwitterTrends");
+            }
+        }
+
         function refreshAll() {
             // Add visual feedback
             const indicator = document.getElementById('live-indicator');
@@ -619,7 +675,8 @@
             
             Promise.allSettled([
                 fetchWeather(), fetchMarkets(), fetchNews(),
-                fetchMovies(), fetchAstronomy(), fetchSports(), fetchCalendar()
+                fetchTwitterTrends(), fetchMovies(), fetchAstronomy(), 
+                fetchSports(), fetchCalendar()
             ]).then(() => {
                 indicator.innerText = ogText;
             });
