@@ -33,4 +33,4 @@ feeds:
     url: "https://www.moneycontrol.com/rss/marketreports.xml"
   - name: "Google Trends India"
     category: "trending"
-    url: "https://trends.google.com/trends/trendingsearches/daily/rss?geo=IN"
+    url: "https://news.google.com/rss/search?q=trending+tech+india+when:1d&hl=en-IN&gl=IN&ceid=IN:en"
