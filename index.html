@@ -31,15 +31,29 @@
             padding-bottom: 50px;
         }
 
+        /* Animations */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* Header */
         header {
+            position: relative;
             background: linear-gradient(180deg, #111827 0%, #090d16 100%);
             border-bottom: 1px solid var(--border-dark);
             padding: 24px 16px 16px;
             text-align: center;
         }
 
-        .header-inner { max-width: 1200px; margin: 0 auto; }
+        .header-inner { max-width: 1200px; margin: 0 auto; position: relative; }
+
+        .settings-icon {
+            position: absolute; right: 0; top: 0;
+            font-size: 1.4rem; cursor: pointer; transition: transform 0.3s;
+            background: rgba(255,255,255,0.05); padding: 8px; border-radius: 50%;
+        }
+        .settings-icon:hover { transform: rotate(45deg); background: rgba(255,255,255,0.1); }
 
         .pill-badge {
             display: inline-flex; align-items: center; gap: 6px;
@@ -71,6 +85,7 @@
             min-width: 160px; flex: 0 0 auto;
             background: var(--card-dark); border: 1px solid var(--border-dark);
             border-radius: 10px; padding: 10px 14px; transition: border-color 0.2s ease;
+            animation: fadeUp 0.4s ease-out forwards; opacity: 0;
         }
         .ticker-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
         .ticker-name { font-size: 0.75rem; font-weight: 700; color: var(--text-sub); text-transform: uppercase; }
@@ -89,6 +104,7 @@
             border: 1px solid var(--border-dark); border-radius: 12px;
             padding: 14px 20px; display: flex; flex-wrap: wrap;
             justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 24px;
+            animation: fadeUp 0.5s ease-out forwards;
         }
         .cw-left { display: flex; align-items: center; gap: 12px; }
         .cw-temp { font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--accent-orange); }
@@ -120,6 +136,7 @@
             background: var(--card-dark); border: 1px solid var(--border-dark);
             border-radius: 10px; padding: 16px; display: flex; flex-direction: column;
             justify-content: space-between; transition: transform 0.15s ease, border-color 0.15s ease;
+            animation: fadeUp 0.5s ease-out forwards; opacity: 0;
         }
         .news-card:hover { transform: translateY(-2px); border-color: var(--accent-blue); }
         .card-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
@@ -132,18 +149,48 @@
         .card-link { text-align: right; margin-top: auto; }
         .card-link a { font-size: 0.78rem; font-weight: 600; color: var(--accent-blue); text-decoration: none; }
 
-        /* Loader */
+        /* Modals & States */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+            display: none; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal {
+            background: var(--card-dark); border: 1px solid var(--border-dark);
+            padding: 24px; border-radius: 12px; width: 90%; max-width: 350px;
+            animation: fadeUp 0.3s ease-out forwards;
+        }
+        .modal h3 { margin-bottom: 16px; font-family: 'Outfit'; }
+        .modal input {
+            width: 100%; padding: 10px; margin-bottom: 16px;
+            background: #0f172a; border: 1px solid var(--border-dark); color: #fff;
+            border-radius: 6px; margin-top: 4px;
+        }
+        .modal-btns { display: flex; gap: 12px; justify-content: flex-end; }
+        .btn { padding: 8px 16px; border-radius: 6px; cursor: pointer; border: none; font-weight: 600; }
+        .btn-primary { background: var(--accent-blue); color: #000; }
+        .btn-cancel { background: transparent; color: var(--text-sub); border: 1px solid var(--border-dark); }
+        .btn-cancel:hover { color: var(--text-main); }
+
+        .error-state {
+            text-align: center; padding: 30px; background: rgba(239, 68, 68, 0.05);
+            border: 1px dashed var(--accent-red); border-radius: 10px; grid-column: 1 / -1;
+            animation: fadeUp 0.3s ease-out forwards;
+        }
+        .error-state p { color: var(--accent-red); margin-bottom: 12px; font-weight: 600; }
+        .error-state button {
+            background: transparent; color: var(--text-main); border: 1px solid var(--border-dark);
+            padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600;
+        }
+        .error-state button:hover { background: rgba(255,255,255,0.1); }
+
         .loader {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            border: 3px solid rgba(56, 189, 248, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--accent-blue);
-            animation: spin 1s ease-in-out infinite;
+            display: inline-block; width: 24px; height: 24px;
+            border: 3px solid rgba(56, 189, 248, 0.3); border-radius: 50%;
+            border-top-color: var(--accent-blue); animation: spin 1s ease-in-out infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .loading-container { text-align: center; padding: 40px; color: var(--text-sub); }
+        .loading-container { text-align: center; padding: 40px; color: var(--text-sub); grid-column: 1 / -1; }
 
         footer { text-align: center; color: var(--text-sub); font-size: 0.75rem; margin-top: 30px; }
 
@@ -157,20 +204,19 @@
 <body>
     <header>
         <div class="header-inner">
-            <div class="pill-badge">☀️ Morning Brief (Live)</div>
+            <div class="settings-icon" onclick="openSettings()" title="Settings">⚙️</div>
+            <div class="pill-badge" id="live-indicator">☀️ Morning Brief (Live)</div>
             <h1>Live Global Dashboard</h1>
             <p class="sub-header">Markets • Local • National • Global • Fetching fresh data...</p>
         </div>
     </header>
 
     <div class="ticker-bar" id="ticker-container">
-        <!-- Tickers will load here -->
         <div class="loader" style="margin: 10px auto;"></div>
     </div>
 
     <div class="app-container">
         <div class="compact-weather" id="weather-container">
-            <!-- Weather will load here -->
             <div class="loader"></div> <span style="color:var(--text-sub); margin-left:10px;">Loading Live Weather...</span>
         </div>
 
@@ -238,19 +284,62 @@
         </footer>
     </div>
 
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settings-modal">
+        <div class="modal">
+            <h3>⚙️ Settings</h3>
+            <label style="font-size:0.8rem;color:var(--text-sub);">Latitude</label>
+            <input type="number" id="input-lat" step="any" placeholder="11.0168">
+            <label style="font-size:0.8rem;color:var(--text-sub);">Longitude</label>
+            <input type="number" id="input-lon" step="any" placeholder="76.9558">
+            <div class="modal-btns">
+                <button class="btn btn-cancel" onclick="closeSettings()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveSettings()">Save & Reload</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Formatting numbers
         const fNumber = (n) => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(n);
+        const getErrorHtml = (msg, func) => `<div class="error-state"><div style="font-size: 2rem; margin-bottom: 8px;">⚠️</div><p>${msg}</p><button onclick="${func}()">Try Again</button></div>`;
+        const getLoaderHtml = (msg) => `<div class="loading-container"><div class="loader"></div><p style="margin-top: 10px;">${msg}</p></div>`;
+
+        // Settings Logic
+        let userLat = localStorage.getItem('mb_lat') || null;
+        let userLon = localStorage.getItem('mb_lon') || null;
+
+        function openSettings() {
+            document.getElementById('input-lat').value = userLat || '11.0168';
+            document.getElementById('input-lon').value = userLon || '76.9558';
+            document.getElementById('settings-modal').style.display = 'flex';
+        }
+        function closeSettings() {
+            document.getElementById('settings-modal').style.display = 'none';
+        }
+        function saveSettings() {
+            userLat = document.getElementById('input-lat').value;
+            userLon = document.getElementById('input-lon').value;
+            localStorage.setItem('mb_lat', userLat);
+            localStorage.setItem('mb_lon', userLon);
+            closeSettings();
+            refreshAll();
+        }
+        function getGeoParams() {
+            return (userLat && userLon) ? `?lat=${userLat}&lon=${userLon}` : '';
+        }
 
         async function fetchWeather() {
+            document.getElementById('weather-container').innerHTML = getLoaderHtml("Loading Live Weather...");
             try {
-                const res = await fetch('/api/weather');
+                const res = await fetch('/api/weather' + getGeoParams());
+                if (!res.ok) throw new Error("HTTP " + res.status);
                 const data = await res.json();
                 document.getElementById('weather-container').innerHTML = `
                     <div class="cw-left">
                         <span class="cw-temp">${data.current_temp}°C</span>
                         <div>
-                            <div class="cw-desc">☀️ Coimbatore Weather</div>
+                            <div class="cw-desc">☀️ Weather Overview</div>
                             <div style="font-size: 0.8rem; color: var(--text-sub);">${data.weather_line}</div>
                         </div>
                     </div>
@@ -263,20 +352,22 @@
                 `;
             } catch (err) {
                 console.error("Weather error:", err);
-                document.getElementById('weather-container').innerHTML = `<p style="color:red">Failed to load weather data.</p>`;
+                document.getElementById('weather-container').innerHTML = getErrorHtml("Failed to load weather data.", "fetchWeather");
             }
         }
 
         async function fetchMarkets() {
+            document.getElementById('ticker-container').innerHTML = `<div class="loader" style="margin: 10px auto;"></div>`;
             try {
                 const res = await fetch('/api/markets');
+                if (!res.ok) throw new Error("HTTP " + res.status);
                 const data = await res.json();
                 let html = '';
-                data.forEach(m => {
+                data.forEach((m, idx) => {
                     const badgeCls = m.is_up ? 'up' : 'down';
                     const sign = m.change > 0 ? '+' : '';
                     html += `
-                    <div class="ticker-card ${badgeCls}">
+                    <div class="ticker-card ${badgeCls}" style="animation-delay: ${idx * 0.05}s">
                         <div class="ticker-top">
                             <span class="ticker-name">${m.name || m.symbol}</span>
                             <span class="ticker-badge">${sign}${m.pct_change.toFixed(2)}%</span>
@@ -287,7 +378,7 @@
                 document.getElementById('ticker-container').innerHTML = html;
             } catch (err) {
                 console.error("Markets error:", err);
-                document.getElementById('ticker-container').innerHTML = `<p style="color:red; padding: 10px;">Failed to load markets.</p>`;
+                document.getElementById('ticker-container').innerHTML = getErrorHtml("Failed to load markets.", "fetchMarkets");
             }
         }
 
@@ -301,8 +392,10 @@
         };
 
         async function fetchNews() {
+            document.getElementById('news-container').innerHTML = getLoaderHtml("Aggregating live news and trends...");
             try {
                 const res = await fetch('/api/news');
+                if (!res.ok) throw new Error("HTTP " + res.status);
                 const data = await res.json();
                 let html = '';
                 
@@ -311,22 +404,23 @@
                     let itemsHtml = '';
                     
                     if (items.length === 0) {
-                        itemsHtml = '<p class="no-items">No news items found.</p>';
+                        itemsHtml = '<p class="no-items" style="color:var(--text-sub);">No news items found.</p>';
                     } else {
-                        // Limit to 5 for fast UI
                         items.slice(0, 5).forEach((item, idx) => {
                             const title = item.title || "No Title";
                             const summary = item.summary || title;
                             const source = item.source || "News";
                             const url = item.url || "#";
+                            const imgHtml = item.image ? `<img src="${item.image}" style="width:100%; border-radius:8px; margin-bottom:12px; height:160px; object-fit:cover;" onerror="this.style.display='none'">` : '';
                             
                             itemsHtml += `
-                            <article class="news-card">
+                            <article class="news-card" style="animation-delay: ${idx * 0.1}s">
                                 <div class="card-meta">
                                     <span class="card-num">#${idx + 1}</span>
                                     <span class="card-src">${source}</span>
                                 </div>
                                 <h3 class="card-title"><a href="${url}" target="_blank" rel="noopener">${title}</a></h3>
+                                ${imgHtml}
                                 <p class="card-desc">${summary}</p>
                                 <div class="card-link"><a href="${url}" target="_blank" rel="noopener">Read story &rarr;</a></div>
                             </article>`;
@@ -346,9 +440,16 @@
                 }
                 
                 document.getElementById('news-container').innerHTML = html;
+                // Re-trigger tab filtering based on active tab
+                const activeBtn = document.querySelector('.tab-btn.active');
+                if(activeBtn) {
+                    const catMap = ['all', 'markets', 'coimbatore', 'india', 'trending', 'movies', 'sports', 'calendar', 'astronomy'];
+                    const activeIndex = Array.from(document.querySelectorAll('.tab-btn')).indexOf(activeBtn);
+                    filterCategory(catMap[activeIndex] || 'all', activeBtn);
+                }
             } catch (err) {
                 console.error("News error:", err);
-                document.getElementById('news-container').innerHTML = `<p style="color:red">Failed to load news.</p>`;
+                document.getElementById('news-container').innerHTML = getErrorHtml("Failed to load news.", "fetchNews");
             }
         }
 
@@ -381,11 +482,13 @@
         }
 
         async function fetchMovies() {
+            document.getElementById('movies-grid').innerHTML = getLoaderHtml("Loading Movies...");
             try {
                 const res = await fetch('/api/movies');
+                if (!res.ok) throw new Error("HTTP " + res.status);
                 const data = await res.json();
                 let html = '';
-                const entries = data.feed.entry || [];
+                const entries = data.feed?.entry || [];
                 entries.forEach((item, idx) => {
                     const title = item['im:name']?.label || 'Movie';
                     const summary = item.summary?.label || 'No summary available';
@@ -393,7 +496,7 @@
                     const link = item.link ? item.link[0]?.attributes?.href : '#';
                     
                     html += `
-                    <article class="news-card">
+                    <article class="news-card" style="animation-delay: ${idx * 0.1}s">
                         <div class="card-meta">
                             <span class="card-num">#${idx + 1}</span>
                             <span class="card-src">iTunes Box Office</span>
@@ -406,33 +509,33 @@
                 document.getElementById('movies-grid').innerHTML = html || '<p>No movies found.</p>';
             } catch (err) {
                 console.error("Movies error:", err);
-                document.getElementById('movies-grid').innerHTML = `<p style="color:red">Failed to load movies.</p>`;
+                document.getElementById('movies-grid').innerHTML = getErrorHtml("Failed to load movies.", "fetchMovies");
             }
         }
 
         async function fetchAstronomy() {
+            document.getElementById('astronomy-grid').innerHTML = getLoaderHtml("Loading Astronomy...");
             try {
-                const res = await fetch('/api/astronomy');
+                const res = await fetch('/api/astronomy' + getGeoParams());
+                if (!res.ok) throw new Error("HTTP " + res.status);
                 const data = await res.json();
                 let html = '';
                 
-                // Sunrise/Sunset
                 const sun = data.sun?.results;
                 if (sun) {
                     html += `
-                    <article class="news-card" style="margin-bottom: 16px;">
-                        <h3 class="card-title">☀️ Coimbatore Sun Cycle</h3>
+                    <article class="news-card" style="margin-bottom: 16px; animation-delay: 0s;">
+                        <h3 class="card-title">☀️ Sun Cycle Overview</h3>
                         <p class="card-desc"><strong>Sunrise:</strong> ${sun.sunrise}</p>
                         <p class="card-desc"><strong>Sunset:</strong> ${sun.sunset}</p>
                         <p class="card-desc"><strong>Day Length:</strong> ${sun.day_length}</p>
                     </article>`;
                 }
                 
-                // NASA
                 const nasa = data.nasa;
                 if (nasa && nasa.url) {
                     html += `
-                    <article class="news-card">
+                    <article class="news-card" style="animation-delay: 0.1s;">
                         <div class="card-meta">
                             <span class="card-num">NASA</span>
                             <span class="card-src">Astronomy Picture of the Day</span>
@@ -446,13 +549,15 @@
                 document.getElementById('astronomy-grid').innerHTML = html || '<p>No astronomy data found.</p>';
             } catch (err) {
                 console.error("Astronomy error:", err);
-                document.getElementById('astronomy-grid').innerHTML = `<p style="color:red">Failed to load astronomy.</p>`;
+                document.getElementById('astronomy-grid').innerHTML = getErrorHtml("Failed to load astronomy.", "fetchAstronomy");
             }
         }
 
         async function fetchSports() {
+            document.getElementById('sports-grid').innerHTML = getLoaderHtml("Loading Sports...");
             try {
                 const res = await fetch('/api/sports');
+                if (!res.ok) throw new Error("HTTP " + res.status);
                 const data = await res.json();
                 let html = '';
                 const articles = data.articles || [];
@@ -460,57 +565,71 @@
                     const title = item.headline || 'Sports News';
                     const summary = item.description || title;
                     const link = item.links?.web?.href || '#';
+                    // ESPN API uses images array
+                    const img = item.images && item.images.length > 0 ? item.images[0].url : '';
                     
                     html += `
-                    <article class="news-card">
+                    <article class="news-card" style="animation-delay: ${idx * 0.1}s">
                         <div class="card-meta">
                             <span class="card-num">#${idx + 1}</span>
                             <span class="card-src">ESPN Cricket</span>
                         </div>
                         <h3 class="card-title"><a href="${link}" target="_blank" rel="noopener">${title}</a></h3>
+                        ${img ? `<img src="${img}" style="width:100%; border-radius:8px; margin-bottom:12px; height:160px; object-fit:cover;">` : ''}
                         <p class="card-desc" style="-webkit-line-clamp:3;">${summary}</p>
                     </article>`;
                 });
                 document.getElementById('sports-grid').innerHTML = html || '<p>No sports news found.</p>';
             } catch (err) {
                 console.error("Sports error:", err);
-                document.getElementById('sports-grid').innerHTML = `<p style="color:red">Failed to load sports.</p>`;
+                document.getElementById('sports-grid').innerHTML = getErrorHtml("Failed to load sports.", "fetchSports");
             }
         }
 
         async function fetchCalendar() {
+            document.getElementById('calendar-grid').innerHTML = getLoaderHtml("Loading Calendar...");
             try {
                 const res = await fetch('/api/calendar');
+                if (!res.ok) throw new Error("HTTP " + res.status);
                 const data = await res.json();
                 let html = '';
-                // Filter upcoming
                 const today = new Date().toISOString().split('T')[0];
                 const upcoming = data.filter(d => d.date >= today).slice(0, 6);
                 
-                upcoming.forEach((item) => {
+                upcoming.forEach((item, idx) => {
                     html += `
-                    <article class="news-card">
-                        <h3 class="card-title" style="color: var(--accent-orange);">${item.date}</h3>
-                        <p class="card-desc" style="font-size:1.1rem; color:var(--text-main); font-weight:600;">${item.name}</p>
+                    <article class="news-card" style="animation-delay: ${idx * 0.1}s">
+                        <h3 class="card-title" style="color: var(--accent-orange); font-size:1.4rem;">${item.date}</h3>
+                        <p class="card-desc" style="font-size:1.1rem; color:var(--text-main); font-weight:600; margin-bottom:4px;">${item.name}</p>
                         <p class="card-desc">${item.localName}</p>
                     </article>`;
                 });
                 document.getElementById('calendar-grid').innerHTML = html || '<p>No upcoming holidays found.</p>';
             } catch (err) {
                 console.error("Calendar error:", err);
-                document.getElementById('calendar-grid').innerHTML = `<p style="color:red">Failed to load calendar.</p>`;
+                document.getElementById('calendar-grid').innerHTML = getErrorHtml("Failed to load calendar.", "fetchCalendar");
             }
+        }
+
+        function refreshAll() {
+            // Add visual feedback
+            const indicator = document.getElementById('live-indicator');
+            const ogText = indicator.innerText;
+            indicator.innerText = '🔄 Refreshing...';
+            
+            Promise.allSettled([
+                fetchWeather(), fetchMarkets(), fetchNews(),
+                fetchMovies(), fetchAstronomy(), fetchSports(), fetchCalendar()
+            ]).then(() => {
+                indicator.innerText = ogText;
+            });
         }
 
         // Initialize fetches on load
         window.onload = () => {
-            fetchWeather();
-            fetchMarkets();
-            fetchNews();
-            fetchMovies();
-            fetchAstronomy();
-            fetchSports();
-            fetchCalendar();
+            refreshAll();
+            // Auto refresh every 10 minutes
+            setInterval(refreshAll, 600000); 
         };
     </script>
 </body>

@@ -71,11 +71,22 @@ async def fetch_single_feed(
 
             title = entry.get("title", "").strip()
             item_url = entry.get("link", "").strip()
-            summary = entry.get("summary", entry.get("description", "")).strip()
+            raw_summary = entry.get("summary", entry.get("description", ""))
+            
+            image_url = ""
+            if "media_content" in entry and len(entry.media_content) > 0:
+                image_url = entry.media_content[0].get("url", "")
+            if not image_url and "media_thumbnail" in entry and len(entry.media_thumbnail) > 0:
+                image_url = entry.media_thumbnail[0].get("url", "")
+            if not image_url:
+                img_match = re.search(r'<img[^>]+src="([^">]+)"', raw_summary)
+                if img_match:
+                    image_url = img_match.group(1)
 
             # Clean HTML tags from summary if present
-            if summary:
-                summary = re.sub(r"<[^>]+>", "", summary).strip()
+            summary = ""
+            if raw_summary:
+                summary = re.sub(r"<[^>]+>", "", raw_summary).strip()
             if len(summary) > 300:
                 summary = summary[:297] + "..."
 
@@ -88,6 +99,7 @@ async def fetch_single_feed(
                         "published_at": published_at.isoformat(),
                         "summary": summary,
                         "category": category,
+                        "image": image_url,
                     }
                 )
 

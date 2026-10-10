@@ -35,26 +35,29 @@ def set_cache(key, val):
     CACHE[key] = (val, time.time())
 
 @app.get("/api/weather")
-async def api_weather():
-    cached = get_cached("weather")
+async def api_weather(lat: float = None, lon: float = None):
+    use_lat = lat if lat is not None else settings.coimbatore_lat
+    use_lon = lon if lon is not None else settings.coimbatore_lon
+    cache_key = f"weather_{use_lat}_{use_lon}"
+    cached = get_cached(cache_key)
     if cached: return cached
     
     data = await fetch_coimbatore_weather(
-        lat=settings.coimbatore_lat, 
-        lon=settings.coimbatore_lon, 
+        lat=use_lat, 
+        lon=use_lon, 
         tz=settings.timezone
     )
     
     # Add Open-Meteo AQI (Free, no key)
     try:
         async with httpx.AsyncClient() as client:
-            resp = await client.get(f"https://air-quality-api.open-meteo.com/v1/air-quality?latitude={settings.coimbatore_lat}&longitude={settings.coimbatore_lon}&current=us_aqi")
+            resp = await client.get(f"https://air-quality-api.open-meteo.com/v1/air-quality?latitude={use_lat}&longitude={use_lon}&current=us_aqi")
             aqi_data = resp.json()
             data["aqi"] = aqi_data.get("current", {}).get("us_aqi", "N/A")
     except Exception:
         data["aqi"] = "N/A"
         
-    set_cache("weather", data)
+    set_cache(cache_key, data)
     return data
 
 @app.get("/api/markets")
@@ -108,13 +111,16 @@ async def api_movies():
     return data
 
 @app.get("/api/astronomy")
-async def api_astronomy():
-    cached = get_cached("astronomy")
+async def api_astronomy(lat: float = None, lon: float = None):
+    use_lat = lat if lat is not None else settings.coimbatore_lat
+    use_lon = lon if lon is not None else settings.coimbatore_lon
+    cache_key = f"astronomy_{use_lat}_{use_lon}"
+    cached = get_cached(cache_key)
     if cached: return cached
     
     async with httpx.AsyncClient() as client:
-        # Sunrise/Sunset for Coimbatore (Free, no key)
-        resp = await client.get(f"https://api.sunrise-sunset.org/json?lat={settings.coimbatore_lat}&lng={settings.coimbatore_lon}&formatted=0")
+        # Sunrise/Sunset for provided coordinates
+        resp = await client.get(f"https://api.sunrise-sunset.org/json?lat={use_lat}&lng={use_lon}&formatted=0")
         sun_data = resp.json()
         
         # NASA Astronomy Picture of the Day (Using DEMO_KEY)
@@ -122,7 +128,7 @@ async def api_astronomy():
         nasa_data = nasa_resp.json()
         
     result = {"sun": sun_data, "nasa": nasa_data}
-    set_cache("astronomy", result)
+    set_cache(cache_key, result)
     return result
 
 @app.get("/api/sports")
