@@ -37,6 +37,16 @@ class Settings(BaseModel):
     # Configured RSS Feeds
     feeds: List[FeedConfig] = [
         FeedConfig(
+            name="Moneycontrol Markets",
+            category="markets",
+            url="https://www.moneycontrol.com/rss/MCtopnews.xml",
+        ),
+        FeedConfig(
+            name="Economic Times Markets",
+            category="markets",
+            url="https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms",
+        ),
+        FeedConfig(
             name="The Hindu World",
             category="world",
             url="https://www.thehindu.com/news/international/feeder/default.rss",
@@ -70,6 +80,11 @@ class Settings(BaseModel):
             name="Google News Coimbatore",
             category="coimbatore",
             url="https://news.google.com/rss/search?q=Coimbatore+when:1d&hl=en-IN&gl=IN&ceid=IN:en",
+        ),
+        FeedConfig(
+            name="Google Trends India",
+            category="trending",
+            url="https://trends.google.com/trending/rss?geo=IN",
         ),
     ]
 
