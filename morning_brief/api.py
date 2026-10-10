@@ -10,6 +10,8 @@ from morning_brief.markets import fetch_market_indicators
 from morning_brief.rss import fetch_all_feeds
 from morning_brief.weather import fetch_coimbatore_weather
 from morning_brief.trends import fetch_twitter_trends
+from morning_brief.ai_digest import generate_ai_digest
+from morning_brief.trends import fetch_twitter_trends
 
 app = FastAPI(title="Morning Brief API")
 
@@ -177,6 +179,27 @@ async def api_trends():
     data = await fetch_twitter_trends()
     set_cache("twitter_trends", data)
     return data
+
+@app.get("/api/ai-digest")
+async def api_ai_digest():
+    cached = get_cached("ai_digest")
+    if cached: return cached
+    
+    # Fetch base data (using cached if available to save time)
+    news_data = await api_news()
+    market_data = await api_markets()
+    trends_data = await api_trends()
+    
+    digest = await generate_ai_digest(
+        news_data=news_data,
+        market_data=market_data,
+        trends_data=trends_data,
+        api_key=settings.gemini_api_key
+    )
+    
+    # Cache longer since it's an AI call (15 mins)
+    CACHE["ai_digest"] = (digest, time.time() + 600)
+    return digest
 
 @app.get("/", response_class=HTMLResponse)
 async def root():

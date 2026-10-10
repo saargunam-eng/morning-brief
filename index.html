@@ -222,6 +222,7 @@
 
         <div class="tab-bar">
             <button class="tab-btn active" onclick="filterCategory('all', this)">All Feeds</button>
+            <button class="tab-btn" onclick="filterCategory('ai', this)" style="background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple)); color: #fff; font-weight: 700; border: none; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">🤖 AI Digest</button>
             <button class="tab-btn" onclick="filterCategory('markets', this)">📈 Markets</button>
             <button class="tab-btn" onclick="filterCategory('coimbatore', this)">🏙️ Local & TN</button>
             <button class="tab-btn" onclick="filterCategory('india', this)">🇮🇳 India & World</button>
@@ -231,6 +232,16 @@
             <button class="tab-btn" onclick="filterCategory('sports', this)">🏏 Sports</button>
             <button class="tab-btn" onclick="filterCategory('calendar', this)">📅 Calendar</button>
             <button class="tab-btn" onclick="filterCategory('astronomy', this)">🌌 Astronomy</button>
+        </div>
+
+        <div id="ai-digest-container" class="cat-section tab-ai" data-category="ai" style="display: none;">
+            <div class="cat-head" style="border-left-color: var(--accent-purple);">
+                <h2>🤖 Intelligent AI Digest</h2>
+                <p>One-page synthesized summary & insights</p>
+            </div>
+            <div id="ai-digest-content" style="background: var(--card-dark); border: 1px solid var(--border-dark); border-radius: 12px; padding: 24px;">
+                <div class="loader"></div> <span style="color:var(--text-sub); margin-left:10px;">Synthesizing AI Digest...</span>
+            </div>
         </div>
 
         <div id="news-container">
@@ -455,7 +466,7 @@
                 // Re-trigger tab filtering based on active tab
                 const activeBtn = document.querySelector('.tab-btn.active');
                 if(activeBtn) {
-                    const catMap = ['all', 'markets', 'coimbatore', 'india', 'tech', 'trending', 'movies', 'sports', 'calendar', 'astronomy'];
+                    const catMap = ['all', 'ai', 'markets', 'coimbatore', 'india', 'tech', 'trending', 'movies', 'sports', 'calendar', 'astronomy'];
                     const activeIndex = Array.from(document.querySelectorAll('.tab-btn')).indexOf(activeBtn);
                     filterCategory(catMap[activeIndex] || 'all', activeBtn);
                 }
@@ -472,6 +483,9 @@
             document.querySelectorAll('.cat-section').forEach(sec => {
                 const secCat = sec.getAttribute('data-category');
                 if (cat === 'all') {
+                    if (secCat !== 'ai') sec.style.display = 'block';
+                    else sec.style.display = 'none';
+                } else if (cat === 'ai' && secCat === 'ai') {
                     sec.style.display = 'block';
                 } else if (cat === 'coimbatore' && (secCat === 'coimbatore' || secCat === 'tamil_nadu')) {
                     sec.style.display = 'block';
@@ -667,6 +681,87 @@
             }
         }
 
+        async function fetchAIDigest() {
+            document.getElementById('ai-digest-content').innerHTML = getLoaderHtml("Synthesizing AI Insights...");
+            try {
+                const res = await fetch('/api/ai-digest');
+                if (!res.ok) throw new Error("HTTP " + res.status);
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+
+                let insightsHtml = data.key_insights ? data.key_insights.map(i => `<li style="margin-bottom:8px;">${i}</li>`).join('') : '';
+                let correlationsHtml = data.correlations ? data.correlations.map(c => `<li style="margin-bottom:8px;">${c}</li>`).join('') : '';
+                let recsHtml = data.recommendations ? data.recommendations.map(r => `<li style="margin-bottom:8px;">${r}</li>`).join('') : '';
+                
+                let chartHtml = '';
+                if (data.chart_data) {
+                    data.chart_data.forEach(item => {
+                        chartHtml += `
+                        <div style="margin-bottom:12px;">
+                            <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px; color:var(--text-sub);">
+                                <span>${item.label}</span>
+                                <span>${item.value}%</span>
+                            </div>
+                            <div style="width:100%; height:8px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden;">
+                                <div style="width:${item.value}%; height:100%; background:var(--accent-purple);"></div>
+                            </div>
+                        </div>`;
+                    });
+                }
+
+                let metrics = data.metrics || {};
+                let sentimentColor = metrics.overall_sentiment_score > 60 ? 'var(--accent-green)' : (metrics.overall_sentiment_score < 40 ? 'var(--accent-red)' : 'var(--accent-orange)');
+
+                document.getElementById('ai-digest-content').innerHTML = `
+                    <p style="font-size:1.1rem; line-height:1.6; margin-bottom:24px; color:var(--text-main); font-weight:500;">
+                        ${data.executive_summary}
+                    </p>
+                    
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:24px; margin-bottom:24px;">
+                        <div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:8px;">
+                            <h4 style="color:var(--accent-blue); margin-bottom:12px;">💡 Key Insights</h4>
+                            <ul style="padding-left:16px; font-size:0.9rem; color:var(--text-sub);">${insightsHtml}</ul>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:8px;">
+                            <h4 style="color:var(--accent-orange); margin-bottom:12px;">🔗 Correlations</h4>
+                            <ul style="padding-left:16px; font-size:0.9rem; color:var(--text-sub);">${correlationsHtml}</ul>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:8px;">
+                            <h4 style="color:var(--accent-green); margin-bottom:12px;">🎯 Recommendations</h4>
+                            <ul style="padding-left:16px; font-size:0.9rem; color:var(--text-sub);">${recsHtml}</ul>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:24px;">
+                        <div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:8px;">
+                            <h4 style="color:var(--accent-purple); margin-bottom:16px;">📊 AI Categorization</h4>
+                            ${chartHtml}
+                        </div>
+                        
+                        <div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:8px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                            <h4 style="color:var(--text-main); margin-bottom:16px; align-self:flex-start;">🧠 Sentiment Overview</h4>
+                            
+                            <!-- Circular Gauge -->
+                            <div style="position:relative; width:120px; height:120px; border-radius:50%; background:conic-gradient(${sentimentColor} ${metrics.overall_sentiment_score}%, rgba(255,255,255,0.1) 0); display:flex; align-items:center; justify-content:center; margin-bottom:16px;">
+                                <div style="width:100px; height:100px; background:var(--card-dark); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-direction:column;">
+                                    <span style="font-size:1.8rem; font-weight:700; color:${sentimentColor}">${metrics.overall_sentiment_score || 0}</span>
+                                    <span style="font-size:0.7rem; color:var(--text-sub); text-transform:uppercase;">Score</span>
+                                </div>
+                            </div>
+                            
+                            <p style="font-size:0.9rem; text-align:center; color:var(--text-sub);">
+                                Market Sentiment: <strong style="color:var(--text-main);">${metrics.market_sentiment || 'Unknown'}</strong><br>
+                                Top Trend: <strong style="color:var(--text-main);">${metrics.top_trending_topic || 'Unknown'}</strong>
+                            </p>
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                console.error("AI Digest error:", err);
+                document.getElementById('ai-digest-content').innerHTML = getErrorHtml("Failed to synthesize AI Digest.", "fetchAIDigest");
+            }
+        }
+
         function refreshAll() {
             // Add visual feedback
             const indicator = document.getElementById('live-indicator');
@@ -676,7 +771,7 @@
             Promise.allSettled([
                 fetchWeather(), fetchMarkets(), fetchNews(),
                 fetchTwitterTrends(), fetchMovies(), fetchAstronomy(), 
-                fetchSports(), fetchCalendar()
+                fetchSports(), fetchCalendar(), fetchAIDigest()
             ]).then(() => {
                 indicator.innerText = ogText;
             });
