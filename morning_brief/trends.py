@@ -26,7 +26,7 @@ async def fetch_twitter_trends() -> Dict[str, List[Dict]]:
                 soup = BeautifulSoup(resp.text, "html.parser")
                 # Trends24 lists trends in an ordered list with class 'trend-card__list'
                 # The first card is the most recent (Current).
-                trend_card = soup.find("ul", class_="trend-card__list")
+                trend_card = soup.find(["ol", "ul"], class_="trend-card__list")
                 
                 trends = []
                 if trend_card:

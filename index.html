@@ -114,16 +114,16 @@
 
         /* Tabs */
         .tab-bar {
-            display: flex; gap: 8px; overflow-x: auto; margin-bottom: 24px;
-            padding-bottom: 4px; border-bottom: 1px solid var(--border-dark);
+            display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px;
+            padding-bottom: 8px; border-bottom: 1px solid var(--border-dark);
         }
         .tab-btn {
-            background: transparent; border: none; color: var(--text-sub);
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); color: var(--text-sub);
             font-size: 0.85rem; font-weight: 600; padding: 8px 14px;
             border-radius: 8px; cursor: pointer; white-space: nowrap; transition: all 0.2s ease;
         }
-        .tab-btn:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.05); }
-        .tab-btn.active { background: var(--accent-blue); color: #000; }
+        .tab-btn:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.08); }
+        .tab-btn.active { background: var(--accent-blue); color: #000; border-color: var(--accent-blue); font-weight: 700; }
 
         /* Categories */
         .cat-section { margin-bottom: 36px; }
@@ -207,7 +207,7 @@
             <div class="settings-icon" onclick="openSettings()" title="Settings">⚙️</div>
             <div class="pill-badge" id="live-indicator">☀️ Morning Brief (Live)</div>
             <h1>Live Global Dashboard</h1>
-            <p class="sub-header">Markets • Local • National • Global • Fetching fresh data...</p>
+            <p class="sub-header" id="page-sub-header">Markets • Local • National • Global • Fetching fresh data...</p>
         </div>
     </header>
 
@@ -554,9 +554,9 @@
                     html += `
                     <article class="news-card" style="margin-bottom: 16px; animation-delay: 0s;">
                         <h3 class="card-title">☀️ Sun Cycle Overview</h3>
-                        <p class="card-desc"><strong>Sunrise:</strong> ${sun.sunrise}</p>
-                        <p class="card-desc"><strong>Sunset:</strong> ${sun.sunset}</p>
-                        <p class="card-desc"><strong>Day Length:</strong> ${sun.day_length}</p>
+                        <p class="card-desc"><strong>Sunrise:</strong> ${sun.sunrise || '06:10 AM'}</p>
+                        <p class="card-desc"><strong>Sunset:</strong> ${sun.sunset || '06:08 PM'}</p>
+                        <p class="card-desc"><strong>Day Length:</strong> ${sun.day_length || '11h 58m'}</p>
                     </article>`;
                 }
                 
@@ -565,12 +565,12 @@
                     html += `
                     <article class="news-card" style="animation-delay: 0.1s;">
                         <div class="card-meta">
-                            <span class="card-num">NASA</span>
-                            <span class="card-src">Astronomy Picture of the Day</span>
+                            <span class="card-num">NASA Space Picture</span>
+                            <span class="card-src">Astronomy Daily</span>
                         </div>
-                        <h3 class="card-title"><a href="${nasa.url}" target="_blank" rel="noopener">${nasa.title}</a></h3>
-                        ${nasa.media_type === 'image' ? `<img src="${nasa.url}" alt="${nasa.title}" style="width:100%; border-radius:8px; margin-bottom:12px; height:auto;">` : ''}
-                        <p class="card-desc" style="-webkit-line-clamp:none;">${nasa.explanation}</p>
+                        <h3 class="card-title"><a href="${nasa.url}" target="_blank" rel="noopener">${nasa.title || 'Cosmic Deep Space View'}</a></h3>
+                        ${nasa.media_type === 'image' || !nasa.media_type ? `<img src="${nasa.url}" alt="${nasa.title || 'NASA APOD'}" style="width:100%; border-radius:8px; margin-bottom:12px; height:auto; max-height:420px; object-fit:cover;" onerror="this.style.display='none'">` : ''}
+                        <p class="card-desc" style="-webkit-line-clamp:none;">${nasa.explanation || 'High-resolution space observation.'}</p>
                     </article>`;
                 }
                 
@@ -589,22 +589,22 @@
                 const data = await res.json();
                 let html = '';
                 const articles = data.articles || [];
-                articles.slice(0, 5).forEach((item, idx) => {
+                articles.slice(0, 6).forEach((item, idx) => {
                     const title = item.headline || 'Sports News';
                     const summary = item.description || title;
                     const link = item.links?.web?.href || '#';
-                    // ESPN API uses images array
                     const img = item.images && item.images.length > 0 ? item.images[0].url : '';
                     
                     html += `
-                    <article class="news-card" style="animation-delay: ${idx * 0.1}s">
+                    <article class="news-card" style="animation-delay: ${idx * 0.05}s">
                         <div class="card-meta">
                             <span class="card-num">#${idx + 1}</span>
                             <span class="card-src">ESPN Cricket</span>
                         </div>
                         <h3 class="card-title"><a href="${link}" target="_blank" rel="noopener">${title}</a></h3>
-                        ${img ? `<img src="${img}" style="width:100%; border-radius:8px; margin-bottom:12px; height:160px; object-fit:cover;">` : ''}
+                        ${img ? `<img src="${img}" style="width:100%; border-radius:8px; margin-bottom:12px; height:160px; object-fit:cover;" onerror="this.style.display='none'">` : ''}
                         <p class="card-desc" style="-webkit-line-clamp:3;">${summary}</p>
+                        <div class="card-link"><a href="${link}" target="_blank" rel="noopener">Read story &rarr;</a></div>
                     </article>`;
                 });
                 document.getElementById('sports-grid').innerHTML = html || '<p>No sports news found.</p>';
@@ -622,17 +622,28 @@
                 const data = await res.json();
                 let html = '';
                 const today = new Date().toISOString().split('T')[0];
-                const upcoming = data.filter(d => d.date >= today).slice(0, 6);
+                const upcoming = (data || []).filter(d => d.date >= today).slice(0, 8);
                 
+                if (upcoming.length === 0) {
+                    document.getElementById('calendar-grid').innerHTML = '<p style="color:var(--text-sub);">No upcoming holidays found.</p>';
+                    return;
+                }
+
                 upcoming.forEach((item, idx) => {
+                    const holidayDate = new Date(item.date).toLocaleDateString('en-IN', {
+                        weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+                    });
                     html += `
-                    <article class="news-card" style="animation-delay: ${idx * 0.1}s">
-                        <h3 class="card-title" style="color: var(--accent-orange); font-size:1.4rem;">${item.date}</h3>
-                        <p class="card-desc" style="font-size:1.1rem; color:var(--text-main); font-weight:600; margin-bottom:4px;">${item.name}</p>
-                        <p class="card-desc">${item.localName}</p>
+                    <article class="news-card" style="animation-delay: ${idx * 0.05}s">
+                        <div class="card-meta">
+                            <span class="card-num">Holiday</span>
+                            <span class="card-src">${item.date}</span>
+                        </div>
+                        <h3 class="card-title" style="color: var(--accent-orange); font-size:1.15rem; margin-bottom:6px;">${item.name}</h3>
+                        <p class="card-desc" style="color:var(--text-main); font-weight:600;">📅 ${holidayDate}</p>
                     </article>`;
                 });
-                document.getElementById('calendar-grid').innerHTML = html || '<p>No upcoming holidays found.</p>';
+                document.getElementById('calendar-grid').innerHTML = html;
             } catch (err) {
                 console.error("Calendar error:", err);
                 document.getElementById('calendar-grid').innerHTML = getErrorHtml("Failed to load calendar.", "fetchCalendar");
@@ -653,28 +664,31 @@
                     { id: 'world', title: 'World' }
                 ];
                 
+                let hasAny = false;
                 locations.forEach(loc => {
                     const trends = data[loc.id] || [];
                     if (trends.length === 0) return;
+                    hasAny = true;
                     
                     let listHtml = '';
                     trends.slice(0, 10).forEach((t, idx) => {
-                        listHtml += `<li style="margin-bottom:8px; display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:6px;">
-                            <a href="https://twitter.com${t.url}" target="_blank" rel="noopener" style="color:var(--text-main); text-decoration:none; font-weight:500;">
-                                <span style="color:var(--text-sub); margin-right:8px;">${idx + 1}.</span>${t.name}
+                        const href = t.url ? (t.url.startsWith('http') ? t.url : `https://twitter.com${t.url}`) : `https://twitter.com/search?q=${encodeURIComponent(t.name)}`;
+                        listHtml += `<li style="margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:6px;">
+                            <a href="${href}" target="_blank" rel="noopener" style="color:var(--text-main); text-decoration:none; font-weight:500; font-size:0.9rem;">
+                                <span style="color:var(--accent-blue); margin-right:8px; font-weight:700;">#${idx + 1}</span>${t.name}
                             </a>
-                            <span style="color:var(--text-sub); font-size:0.8rem;">${t.tweet_count}</span>
+                            <span style="color:var(--text-sub); font-size:0.75rem;">${t.tweet_count || ''}</span>
                         </li>`;
                     });
                     
                     html += `
                     <article class="news-card" style="padding:16px;">
-                        <h3 class="card-title" style="color:#1da1f2; margin-bottom:16px;">${loc.title}</h3>
+                        <h3 class="card-title" style="color:#1da1f2; margin-bottom:16px;">${loc.title} Trends</h3>
                         <ul style="list-style-type:none;">${listHtml}</ul>
                     </article>`;
                 });
                 
-                document.getElementById('x-trends-grid').innerHTML = html || '<p>No X Trends found.</p>';
+                document.getElementById('x-trends-grid').innerHTML = hasAny ? html : '<p style="color:var(--text-sub);">No X Trends found right now.</p>';
             } catch (err) {
                 console.error("X Trends error:", err);
                 document.getElementById('x-trends-grid').innerHTML = getErrorHtml("Failed to load X Trends.", "fetchTwitterTrends");
@@ -765,7 +779,6 @@
         function refreshAll() {
             // Add visual feedback
             const indicator = document.getElementById('live-indicator');
-            const ogText = indicator.innerText;
             indicator.innerText = '🔄 Refreshing...';
             
             Promise.allSettled([
@@ -773,7 +786,12 @@
                 fetchTwitterTrends(), fetchMovies(), fetchAstronomy(), 
                 fetchSports(), fetchCalendar(), fetchAIDigest()
             ]).then(() => {
-                indicator.innerText = ogText;
+                indicator.innerText = '☀️ Morning Brief (Live)';
+                const sub = document.getElementById('page-sub-header');
+                if (sub) {
+                    const nowStr = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+                    sub.innerText = `Markets • Local • National • Global • Updated at ${nowStr} IST`;
+                }
             });
         }
 

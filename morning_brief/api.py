@@ -11,6 +11,7 @@ from morning_brief.rss import fetch_all_feeds
 from morning_brief.weather import fetch_coimbatore_weather
 from morning_brief.trends import fetch_twitter_trends
 from morning_brief.ai_digest import generate_ai_digest
+from morning_brief.astronomy import fetch_coimbatore_solar_times
 
 app = FastAPI(title="Morning Brief API")
 
@@ -69,23 +70,25 @@ async def api_markets():
     
     data = await fetch_market_indicators()
     
-    # Add Forex (USD to INR) via ExchangeRate-API (Free, no key)
-    try:
-        async with httpx.AsyncClient() as client:
-            resp = await client.get("https://open.er-api.com/v6/latest/USD")
-            rates = resp.json()
-            inr = rates.get("rates", {}).get("INR", 0)
-            if inr:
-                data.append({
-                    "symbol": "USDINR",
-                    "name": "USD / INR",
-                    "price": inr,
-                    "change": 0.0,
-                    "pct_change": 0.0,
-                    "is_up": True
-                })
-    except Exception:
-        pass
+    # Add Forex (USD to INR) via ExchangeRate-API (Fallback only if not present)
+    has_usdinr = any("USD" in m.get("name", "") or "USD" in m.get("symbol", "") for m in data)
+    if not has_usdinr:
+        try:
+            async with httpx.AsyncClient(timeout=8.0) as client:
+                resp = await client.get("https://open.er-api.com/v6/latest/USD")
+                rates = resp.json()
+                inr = rates.get("rates", {}).get("INR", 0)
+                if inr:
+                    data.append({
+                        "symbol": "USDINR",
+                        "name": "USD / INR",
+                        "price": round(inr, 2),
+                        "change": 0.0,
+                        "pct_change": 0.0,
+                        "is_up": True
+                    })
+        except Exception:
+            pass
 
     set_cache("markets", data)
     return data
@@ -104,10 +107,12 @@ async def api_movies():
     cached = get_cached("movies")
     if cached: return cached
     
-    async with httpx.AsyncClient() as client:
-        # iTunes Top 10 Movies (Completely free, no key, authentic JSON)
-        resp = await client.get("https://itunes.apple.com/us/rss/topmovies/limit=10/json")
-        data = resp.json()
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.get("https://itunes.apple.com/us/rss/topmovies/limit=10/json")
+            data = resp.json()
+    except Exception:
+        data = {"feed": {"entry": []}}
         
     set_cache("movies", data)
     return data
@@ -120,16 +125,30 @@ async def api_astronomy(lat: float = None, lon: float = None):
     cached = get_cached(cache_key)
     if cached: return cached
     
-    async with httpx.AsyncClient() as client:
-        # Sunrise/Sunset for provided coordinates
-        resp = await client.get(f"https://api.sunrise-sunset.org/json?lat={use_lat}&lng={use_lon}&formatted=0")
-        sun_data = resp.json()
+    # 1. Precise local solar times in IST
+    sun_data = await fetch_coimbatore_solar_times(lat=use_lat, lon=use_lon)
+    
+    # 2. NASA Astronomy Picture of the Day with resilient fallback
+    nasa_data = None
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            nasa_resp = await client.get("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY")
+            if nasa_resp.status_code == 200:
+                res_json = nasa_resp.json()
+                if "title" in res_json and "url" in res_json:
+                    nasa_data = res_json
+    except Exception:
+        pass
         
-        # NASA Astronomy Picture of the Day (Using DEMO_KEY)
-        nasa_resp = await client.get("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY")
-        nasa_data = nasa_resp.json()
+    if not nasa_data:
+        nasa_data = {
+            "title": "NGC 602 and Beyond: A Celestial Nursery",
+            "explanation": "A stunning high-resolution deep space observation captured by the Hubble and James Webb Space Telescopes, revealing clusters of young stars sculpting ridges of interstellar gas and dust.",
+            "url": "https://images-assets.nasa.gov/image/PIA25658/PIA25658~orig.jpg",
+            "media_type": "image"
+        }
         
-    result = {"sun": sun_data, "nasa": nasa_data}
+    result = {"sun": {"results": sun_data, "status": "OK"}, "nasa": nasa_data}
     set_cache(cache_key, result)
     return result
 
@@ -138,10 +157,12 @@ async def api_sports():
     cached = get_cached("sports")
     if cached: return cached
     
-    async with httpx.AsyncClient() as client:
-        # ESPN Free API for top sports news/scores (generic top headlines)
-        resp = await client.get("https://site.api.espn.com/apis/site/v2/sports/cricket/8039/news")
-        data = resp.json()
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.get("https://site.api.espn.com/apis/site/v2/sports/cricket/8039/news")
+            data = resp.json()
+    except Exception:
+        data = {"articles": []}
         
     set_cache("sports", data)
     return data
@@ -155,14 +176,14 @@ async def api_calendar():
     try:
         import holidays
         year = datetime.datetime.now().year
-        india_holidays = holidays.India(years=year)
+        india_holidays = holidays.India(years=[year, year + 1])
         
         data = []
         today = datetime.date.today()
         for date, name in sorted(india_holidays.items()):
             if date >= today:
                 data.append({"date": str(date), "name": name, "localName": name})
-                if len(data) >= 6:
+                if len(data) >= 8:
                     break
     except ImportError:
         data = []
