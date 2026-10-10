@@ -11,7 +11,6 @@ from morning_brief.rss import fetch_all_feeds
 from morning_brief.weather import fetch_coimbatore_weather
 from morning_brief.trends import fetch_twitter_trends
 from morning_brief.ai_digest import generate_ai_digest
-from morning_brief.trends import fetch_twitter_trends
 
 app = FastAPI(title="Morning Brief API")
 
