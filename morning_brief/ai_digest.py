@@ -34,7 +34,30 @@ Data for analysis:
 
 async def generate_ai_digest(news_data, market_data, trends_data, api_key: str, model: str = "gemini-2.0-flash") -> dict:
     if not api_key:
-        return {"error": "GEMINI_API_KEY is missing."}
+        return {
+            "executive_summary": "⚠️ AI Features are currently disabled. Please add GEMINI_API_KEY to your .env file to activate real-time AI synthesis.",
+            "key_insights": [
+                "The system is currently running in fallback mode.",
+                "Real-time news correlations require an active API key.",
+                "To unlock the full potential, configure your Gemini credentials."
+            ],
+            "correlations": [
+                "Missing API Key ↔ AI Digest Disabled"
+            ],
+            "recommendations": [
+                "Create a .env file in the root directory.",
+                "Add GEMINI_API_KEY=your_key_here",
+                "Restart the server to see live AI insights."
+            ],
+            "metrics": {
+                "overall_sentiment_score": 0,
+                "market_sentiment": "Offline",
+                "top_trending_topic": "Offline"
+            },
+            "chart_data": [
+                {"label": "Setup Needed", "value": 100}
+            ]
+        }
         
     payload_data = {
         "markets": market_data[:5] if isinstance(market_data, list) else market_data,
