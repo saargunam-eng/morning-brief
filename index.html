@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>Morning Brief — Markets, News & Coimbatore Digest</title>
+    <title>Morning Brief — Live Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -21,11 +21,7 @@
             --accent-purple: #a855f7;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
@@ -43,338 +39,113 @@
             text-align: center;
         }
 
-        .header-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .header-inner { max-width: 1200px; margin: 0 auto; }
 
         .pill-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(56, 189, 248, 0.12);
-            color: var(--accent-blue);
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 20px;
-            border: 1px solid rgba(56, 189, 248, 0.25);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 10px;
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(56, 189, 248, 0.12); color: var(--accent-blue);
+            font-size: 0.75rem; font-weight: 700; padding: 4px 12px;
+            border-radius: 20px; border: 1px solid rgba(56, 189, 248, 0.25);
+            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;
         }
 
         h1 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 2rem;
-            font-weight: 700;
+            font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 700;
             background: linear-gradient(90deg, #ffffff, #38bdf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             margin-bottom: 4px;
         }
 
-        .sub-header {
-            color: var(--text-sub);
-            font-size: 0.9rem;
-            margin-bottom: 16px;
-        }
+        .sub-header { color: var(--text-sub); font-size: 0.9rem; margin-bottom: 16px; }
 
-        /* Market Ticker Bar */
+        /* Market Ticker */
         .ticker-bar {
-            display: flex;
-            gap: 12px;
-            overflow-x: auto;
-            padding: 8px 16px 16px;
-            max-width: 1200px;
-            margin: 0 auto;
+            display: flex; gap: 12px; overflow-x: auto;
+            padding: 8px 16px 16px; max-width: 1200px; margin: 0 auto;
             scrollbar-width: thin;
         }
-
-        .ticker-bar::-webkit-scrollbar {
-            height: 4px;
-        }
-        .ticker-bar::-webkit-scrollbar-thumb {
-            background: var(--border-dark);
-            border-radius: 2px;
-        }
+        .ticker-bar::-webkit-scrollbar { height: 4px; }
+        .ticker-bar::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 2px; }
 
         .ticker-card {
-            min-width: 160px;
-            flex: 0 0 auto;
-            background: var(--card-dark);
-            border: 1px solid var(--border-dark);
-            border-radius: 10px;
-            padding: 10px 14px;
-            transition: border-color 0.2s ease;
+            min-width: 160px; flex: 0 0 auto;
+            background: var(--card-dark); border: 1px solid var(--border-dark);
+            border-radius: 10px; padding: 10px 14px; transition: border-color 0.2s ease;
         }
+        .ticker-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .ticker-name { font-size: 0.75rem; font-weight: 700; color: var(--text-sub); text-transform: uppercase; }
+        .ticker-badge { font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
+        .ticker-card.up .ticker-badge { background: rgba(34, 197, 94, 0.15); color: var(--accent-green); }
+        .ticker-card.down .ticker-badge { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+        .ticker-price { font-size: 1rem; font-weight: 700; color: var(--text-main); }
+        .ticker-chg { font-size: 0.75rem; font-weight: 500; color: var(--text-sub); margin-left: 4px; }
 
-        .ticker-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4px;
-        }
+        /* Main Container */
+        .app-container { max-width: 1200px; margin: 20px auto; padding: 0 16px; }
 
-        .ticker-name {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--text-sub);
-            text-transform: uppercase;
-        }
-
-        .ticker-badge {
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        .ticker-card.up .ticker-badge {
-            background: rgba(34, 197, 94, 0.15);
-            color: var(--accent-green);
-        }
-
-        .ticker-card.down .ticker-badge {
-            background: rgba(239, 68, 68, 0.15);
-            color: var(--accent-red);
-        }
-
-        .ticker-price {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-main);
-        }
-
-        .ticker-chg {
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: var(--text-sub);
-            margin-left: 4px;
-        }
-
-        /* Main App Layout */
-        .app-container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 16px;
-        }
-
-        /* Compact Weather Bar */
+        /* Weather Bar */
         .compact-weather {
             background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
-            border: 1px solid var(--border-dark);
-            border-radius: 12px;
-            padding: 14px 20px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
+            border: 1px solid var(--border-dark); border-radius: 12px;
+            padding: 14px 20px; display: flex; flex-wrap: wrap;
+            justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 24px;
         }
+        .cw-left { display: flex; align-items: center; gap: 12px; }
+        .cw-temp { font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--accent-orange); }
+        .cw-desc { font-size: 0.88rem; color: var(--text-main); font-weight: 500; }
+        .cw-stats { display: flex; gap: 16px; font-size: 0.8rem; color: var(--text-sub); }
+        .cw-stats strong { color: var(--text-main); }
 
-        .cw-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .cw-temp {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--accent-orange);
-        }
-
-        .cw-desc {
-            font-size: 0.88rem;
-            color: var(--text-main);
-            font-weight: 500;
-        }
-
-        .cw-stats {
-            display: flex;
-            gap: 16px;
-            font-size: 0.8rem;
-            color: var(--text-sub);
-        }
-
-        .cw-stats strong {
-            color: var(--text-main);
-        }
-
-        /* Tab Filter Bar */
+        /* Tabs */
         .tab-bar {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            margin-bottom: 24px;
-            padding-bottom: 4px;
-            border-bottom: 1px solid var(--border-dark);
+            display: flex; gap: 8px; overflow-x: auto; margin-bottom: 24px;
+            padding-bottom: 4px; border-bottom: 1px solid var(--border-dark);
         }
-
         .tab-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-sub);
-            font-size: 0.85rem;
-            font-weight: 600;
-            padding: 8px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.2s ease;
+            background: transparent; border: none; color: var(--text-sub);
+            font-size: 0.85rem; font-weight: 600; padding: 8px 14px;
+            border-radius: 8px; cursor: pointer; white-space: nowrap; transition: all 0.2s ease;
         }
+        .tab-btn:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.05); }
+        .tab-btn.active { background: var(--accent-blue); color: #000; }
 
-        .tab-btn:hover {
-            color: var(--text-main);
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .tab-btn.active {
-            background: var(--accent-blue);
-            color: #000;
-        }
-
-        /* Category Grid */
-        .cat-section {
-            margin-bottom: 36px;
-        }
-
-        .cat-head {
-            margin-bottom: 14px;
-            border-left: 3px solid var(--accent-blue);
-            padding-left: 10px;
-        }
-
-        .cat-head h2 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.3rem;
-            font-weight: 700;
-        }
-
-        .cat-head p {
-            font-size: 0.8rem;
-            color: var(--text-sub);
-        }
-
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 16px;
-        }
-
+        /* Categories */
+        .cat-section { margin-bottom: 36px; }
+        .cat-head { margin-bottom: 14px; border-left: 3px solid var(--accent-blue); padding-left: 10px; }
+        .cat-head h2 { font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 700; }
+        .cat-head p { font-size: 0.8rem; color: var(--text-sub); }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+        
         .news-card {
-            background: var(--card-dark);
-            border: 1px solid var(--border-dark);
-            border-radius: 10px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.15s ease, border-color 0.15s ease;
+            background: var(--card-dark); border: 1px solid var(--border-dark);
+            border-radius: 10px; padding: 16px; display: flex; flex-direction: column;
+            justify-content: space-between; transition: transform 0.15s ease, border-color 0.15s ease;
         }
+        .news-card:hover { transform: translateY(-2px); border-color: var(--accent-blue); }
+        .card-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .card-num { font-size: 0.75rem; font-weight: 700; color: var(--accent-blue); }
+        .card-src { font-size: 0.7rem; color: var(--text-sub); background: rgba(255, 255, 255, 0.05); padding: 2px 6px; border-radius: 4px; }
+        .card-title { font-size: 0.95rem; font-weight: 600; line-height: 1.35; margin-bottom: 8px; }
+        .card-title a { color: var(--text-main); text-decoration: none; }
+        .card-title a:hover { color: var(--accent-blue); }
+        .card-desc { font-size: 0.82rem; color: var(--text-sub); margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-link { text-align: right; margin-top: auto; }
+        .card-link a { font-size: 0.78rem; font-weight: 600; color: var(--accent-blue); text-decoration: none; }
 
-        .news-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--accent-blue);
+        /* Loader */
+        .loader {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(56, 189, 248, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent-blue);
+            animation: spin 1s ease-in-out infinite;
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-container { text-align: center; padding: 40px; color: var(--text-sub); }
 
-        .card-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .card-num {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--accent-blue);
-        }
-
-        .card-src {
-            font-size: 0.7rem;
-            color: var(--text-sub);
-            background: rgba(255, 255, 255, 0.05);
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        .card-title {
-            font-size: 0.95rem;
-            font-weight: 600;
-            line-height: 1.35;
-            margin-bottom: 8px;
-        }
-
-        .card-title a {
-            color: var(--text-main);
-            text-decoration: none;
-        }
-
-        .card-title a:hover {
-            color: var(--accent-blue);
-        }
-
-        .card-desc {
-            font-size: 0.82rem;
-            color: var(--text-sub);
-            margin-bottom: 12px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .card-link {
-            text-align: right;
-            margin-top: auto;
-        }
-
-        .card-link a {
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: var(--accent-blue);
-            text-decoration: none;
-        }
-
-        /* Payload Box */
-        .payload-box {
-            background: #030712;
-            border: 1px solid var(--border-dark);
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 40px;
-        }
-
-        .payload-box h3 {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--accent-green);
-            margin-bottom: 8px;
-        }
-
-        pre.code-block {
-            background: #090d16;
-            color: #38bdf8;
-            padding: 12px;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 0.8rem;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            max-height: 250px;
-            overflow-y: auto;
-        }
-
-        footer {
-            text-align: center;
-            color: var(--text-sub);
-            font-size: 0.75rem;
-            margin-top: 30px;
-        }
+        footer { text-align: center; color: var(--text-sub); font-size: 0.75rem; margin-top: 30px; }
 
         @media (max-width: 600px) {
             h1 { font-size: 1.6rem; }
@@ -384,429 +155,180 @@
     </style>
 </head>
 <body>
-
     <header>
         <div class="header-inner">
-            <div class="pill-badge">☀️ Morning Brief v1.1</div>
-            <h1>Coimbatore & Global Dashboard</h1>
-            <p class="sub-header">Markets • Coimbatore • Tamil Nadu • National • Global • Updated 01:36 PM IST</p>
+            <div class="pill-badge">☀️ Morning Brief (Live)</div>
+            <h1>Live Global Dashboard</h1>
+            <p class="sub-header">Markets • Local • National • Global • Fetching fresh data...</p>
         </div>
     </header>
 
-    <!-- Financial Market Ticker Bar -->
-    <div class="ticker-bar">
-        
-        <div class="ticker-card up">
-            <div class="ticker-top">
-                <span class="ticker-name">Nifty 50</span>
-                <span class="ticker-badge">+1.30%</span>
-            </div>
-            <div class="ticker-price">22,520.45 <span class="ticker-chg">+288.65</span></div>
-        </div>
-        
-        <div class="ticker-card up">
-            <div class="ticker-top">
-                <span class="ticker-name">Sensex</span>
-                <span class="ticker-badge">+1.23%</span>
-            </div>
-            <div class="ticker-price">72,472.33 <span class="ticker-chg">+879.13</span></div>
-        </div>
-        
-        <div class="ticker-card up">
-            <div class="ticker-top">
-                <span class="ticker-name">S&amp;P 500</span>
-                <span class="ticker-badge">+0.59%</span>
-            </div>
-            <div class="ticker-price">7,811.54 <span class="ticker-chg">+46.18</span></div>
-        </div>
-        
-        <div class="ticker-card up">
-            <div class="ticker-top">
-                <span class="ticker-name">Nasdaq</span>
-                <span class="ticker-badge">+0.64%</span>
-            </div>
-            <div class="ticker-price">27,366.17 <span class="ticker-chg">+172.83</span></div>
-        </div>
-        
-        <div class="ticker-card down">
-            <div class="ticker-top">
-                <span class="ticker-name">USD / INR</span>
-                <span class="ticker-badge">-0.05%</span>
-            </div>
-            <div class="ticker-price">96.73 <span class="ticker-chg">-0.05</span></div>
-        </div>
-        
-        <div class="ticker-card up">
-            <div class="ticker-top">
-                <span class="ticker-name">Gold (oz)</span>
-                <span class="ticker-badge">+1.43%</span>
-            </div>
-            <div class="ticker-price">4,216.30 <span class="ticker-chg">+59.30</span></div>
-        </div>
-        
+    <div class="ticker-bar" id="ticker-container">
+        <!-- Tickers will load here -->
+        <div class="loader" style="margin: 10px auto;"></div>
     </div>
 
     <div class="app-container">
-
-        <!-- Compact Weather Bar -->
-        <div class="compact-weather">
-            <div class="cw-left">
-                <span class="cw-temp">31.5°C</span>
-                <div>
-                    <div class="cw-desc">☀️ Coimbatore Weather</div>
-                    <div style="font-size: 0.8rem; color: var(--text-sub);">Passing rain showers expected today. (73% chance of rain; carry an umbrella.)</div>
-                </div>
-            </div>
-            <div class="cw-stats">
-                <span>High: <strong>31.8°C</strong></span>
-                <span>Low: <strong>22.2°C</strong></span>
-                <span>Humidity: <strong>52%</strong></span>
-            </div>
+        <div class="compact-weather" id="weather-container">
+            <!-- Weather will load here -->
+            <div class="loader"></div> <span style="color:var(--text-sub); margin-left:10px;">Loading Live Weather...</span>
         </div>
 
-        <!-- Filter Tabs -->
         <div class="tab-bar">
             <button class="tab-btn active" onclick="filterCategory('all', this)">All Feeds</button>
             <button class="tab-btn" onclick="filterCategory('markets', this)">📈 Markets</button>
             <button class="tab-btn" onclick="filterCategory('coimbatore', this)">🏙️ Local & TN</button>
             <button class="tab-btn" onclick="filterCategory('india', this)">🇮🇳 India & World</button>
             <button class="tab-btn" onclick="filterCategory('trending', this)">🔥 Trending</button>
+            <button class="tab-btn" onclick="filterCategory('movies', this)">🎬 Movies</button>
+            <button class="tab-btn" onclick="filterCategory('astronomy', this)">🌌 Astronomy</button>
         </div>
 
-        <!-- Category Sections -->
-        
-        <section class="cat-section tab-markets" data-category="markets">
-            <div class="cat-head">
-                <h2>📈 Markets & Economy</h2>
-                <p>Nifty 50, Sensex, global stocks & financial developments</p>
+        <div id="news-container">
+            <div class="loading-container">
+                <div class="loader"></div>
+                <p style="margin-top: 10px;">Aggregating live news and trends...</p>
             </div>
-            <div class="card-grid">
-                <p class="no-items">No recent news items found for this section in the last 24 hours.</p>
-            </div>
-        </section>
-        
-        <section class="cat-section tab-local" data-category="coimbatore">
-            <div class="cat-head">
-                <h2>🏙️ Coimbatore Local</h2>
-                <p>Civic issues, infrastructure, power & water updates</p>
-            </div>
-            <div class="card-grid">
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#1</span>
-                        <span class="card-src">The Hindu Coimbatore</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/cities/Coimbatore/caste-discrimination-during-sc-mans-burial-commission-seeks-report-from-erode-collector-sp/article71567189.ece" target="_blank" rel="noopener">Caste discrimination during SC man’s burial: Commission seeks report from Erode Collector, SP</a></h3>
-                    <p class="card-desc">It also sought a report on disciplinary action taken against the police and Revenue Department officials who allegedly failed to take preventive measures during the incident</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/cities/Coimbatore/caste-discrimination-during-sc-mans-burial-commission-seeks-report-from-erode-collector-sp/article71567189.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#2</span>
-                        <span class="card-src">The Hindu Coimbatore</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/national/tamil-nadu/tvks-bypoll-wins-a-verdict-on-four-months-of-good-governance-minister-arunraj/article71567203.ece" target="_blank" rel="noopener">TVK’s bypoll victories a verdict on four months of good governance: Minister Arunraj</a></h3>
-                    <p class="card-desc">On the protest by mid-level health workers, K.G. Arunraj said they should have submitted their demands to him or the Health Department Secretary before resorting to agitation</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/national/tamil-nadu/tvks-bypoll-wins-a-verdict-on-four-months-of-good-governance-minister-arunraj/article71567203.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#3</span>
-                        <span class="card-src">The Hindu Coimbatore</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/cities/Coimbatore/p-sathyabama-elected-in-dharapuram-trumps-dmk-rival-by-9471-votes/article71565107.ece" target="_blank" rel="noopener">P. Sathyabama elected in Dharapuram, trumps DMK rival by 9,471 votes</a></h3>
-                    <p class="card-desc">Speaking to mediapersons, the TVK candidate the verdict has proven that the people are in favour of the TVK-led government, and they had dismissed ‘propaganda’ that the opposition had spread about her</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/cities/Coimbatore/p-sathyabama-elected-in-dharapuram-trumps-dmk-rival-by-9471-votes/article71565107.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#4</span>
-                        <span class="card-src">The Hindu Coimbatore</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/cities/Coimbatore/protest-staged-against-construction-of-compound-wall-for-coimbatore-airport/article71565429.ece" target="_blank" rel="noopener">Protest staged against construction of compound wall for Coimbatore airport</a></h3>
-                    <p class="card-desc">Protest staged against construction of compound wall for Coimbatore airport</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/cities/Coimbatore/protest-staged-against-construction-of-compound-wall-for-coimbatore-airport/article71565429.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#5</span>
-                        <span class="card-src">The Hindu Coimbatore</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/national/byelection-bypoll-results-nandigram-rejinagar-madurantakam-dharapuram-thattanchavady-nagaon-live-updates-october-9-2026/article71562394.ece" target="_blank" rel="noopener">Bypoll results highlights: BJP-NDA&#x27;s victory in bypolls shows people have &#x27;deep-rooted connect&#x27; with alliance, says PM Modi</a></h3>
-                    <p class="card-desc">Ruling parties sweep bypolls in three States, Puducherry. BJP makes surprise gains in Muslim-majority Rejinagar in West Bengal; TVK wins Dharapuram in Tamil Nadu. In Puducherry, Chief Minister Rangasamy&#x27;s AINRC wins</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/national/byelection-bypoll-results-nandigram-rejinagar-madurantakam-dharapuram-thattanchavady-nagaon-live-updates-october-9-2026/article71562394.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-            </div>
-        </section>
-        
-        <section class="cat-section tab-local" data-category="tamil_nadu">
-            <div class="cat-head">
-                <h2>🏛️ Tamil Nadu State</h2>
-                <p>State governance, regional economy & policy news</p>
-            </div>
-            <div class="card-grid">
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#1</span>
-                        <span class="card-src">The Hindu Tamil Nadu</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/cities/chennai/anti-cec-protest-over-100-aisf-aiyf-cadres-arrested-during-procession-in-chennai/article71567356.ece" target="_blank" rel="noopener">Anti-CEC protest: Over 100 AISF, AIYF cadres arrested during procession in Chennai</a></h3>
-                    <p class="card-desc">During the scuffle, a protester sustained a head injury and was taken to hospital for treatment</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/cities/chennai/anti-cec-protest-over-100-aisf-aiyf-cadres-arrested-during-procession-in-chennai/article71567356.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#2</span>
-                        <span class="card-src">The Hindu Tamil Nadu</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/national/tamil-nadu/tamil-nadu-cm-vijay-hails-tvks-bypoll-wins-as-victory-for-people-political-decorum/article71564000.ece" target="_blank" rel="noopener">Tamil Nadu CM Vijay hails TVK’s bypoll wins as victory for people, political decorum</a></h3>
-                    <p class="card-desc">In a statement on X, Mr. Vijay claimed the TVK had won without distributing money to voters or resorting to inducements</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/national/tamil-nadu/tamil-nadu-cm-vijay-hails-tvks-bypoll-wins-as-victory-for-people-political-decorum/article71564000.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#3</span>
-                        <span class="card-src">The Hindu Tamil Nadu</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/national/tamil-nadu/no-surprises-in-byelection-results-in-tamil-nadu-and-puducherry-as-voters-favour-the-ruling-party-candidates/article71564070.ece" target="_blank" rel="noopener">No surprises in byelection results in Tamil Nadu and  Puducherry as voters favour the ruling party candidates</a></h3>
-                    <p class="card-desc">The Tamilaga Vettri Kazhagam bags the Madurantakam and Dharapuram (Reserved) Assembly constituencies. In Puducherry, the All India N.R. Congress retains Thattanchavady</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/national/tamil-nadu/no-surprises-in-byelection-results-in-tamil-nadu-and-puducherry-as-voters-favour-the-ruling-party-candidates/article71564070.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#4</span>
-                        <span class="card-src">The Hindu Tamil Nadu</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/national/tamil-nadu/byelection-outcome-a-temporary-victory-for-politics-of-betrayal-says-stalin/article71564172.ece" target="_blank" rel="noopener">Byelection outcome a ‘temporary victory for politics of betrayal’, says Stalin</a></h3>
-                    <p class="card-desc">He says the votes polled by the parties that contested against the ruling TVK shows that it has been rejected by a majority of voters</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/national/tamil-nadu/byelection-outcome-a-temporary-victory-for-politics-of-betrayal-says-stalin/article71564172.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#5</span>
-                        <span class="card-src">The Hindu Tamil Nadu</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/national/tamil-nadu/tvk-allies-hail-byelection-victory-says-its-an-endorsement-of-governments-performance/article71564417.ece" target="_blank" rel="noopener">TVK allies hail byelection victory, says its an endorsement of government’s performance</a></h3>
-                    <p class="card-desc">Alliance leaders including Thirumavalavan and Manickam Tagore congratulate the party on its electoral success</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/national/tamil-nadu/tvk-allies-hail-byelection-victory-says-its-an-endorsement-of-governments-performance/article71564417.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-            </div>
-        </section>
-        
-        <section class="cat-section tab-national" data-category="india">
-            <div class="cat-head">
-                <h2>🇮🇳 India National</h2>
-                <p>Top national stories, economy & public policy</p>
-            </div>
-            <div class="card-grid">
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#1</span>
-                        <span class="card-src">The Hindu India</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/national/kerala/indias-first-cyber-trojan-horse-installation-at-c0c0n-2026-in-kochi/article71567411.ece" target="_blank" rel="noopener">India’s first cyber Trojan Horse garners eyeballs at security meet in Kochi</a></h3>
-                    <p class="card-desc">Titled The Trojan Project™, India’s first Cyber Trojan Horse, the 25-feet tall statue of a horse, weighing approximately two tonnes, has been created by artist DaVinci Suresh</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/national/kerala/indias-first-cyber-trojan-horse-installation-at-c0c0n-2026-in-kochi/article71567411.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#2</span>
-                        <span class="card-src">The Hindu India</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/cities/Delhi/cjp-protests-jantar-mantar-new-delhi-election-commissioner-gyanesh-kumar-resignation-sir-cec-row-october-10-2026-live-news/article71566021.ece" target="_blank" rel="noopener">Anti-CEC Delhi protest LIVE updates: Over 3,000 detained across Delhi; CJP&#x27;s Ajinkya Shinde to lead protest</a></h3>
-                    <p class="card-desc">In a post on X, CJP said, &quot;Until Abhijeet Dipke, Saurav Das and Ashutosh Ranka are in detention, CJP’s Organization In-Charge Ajinkya Shinde will lead this protest at Jantar Mantar.&quot;</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/cities/Delhi/cjp-protests-jantar-mantar-new-delhi-election-commissioner-gyanesh-kumar-resignation-sir-cec-row-october-10-2026-live-news/article71566021.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#3</span>
-                        <span class="card-src">The Hindu India</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/cities/Delhi/delhi-protest-lawyers-detained-near-supreme-court/article71567395.ece" target="_blank" rel="noopener">Delhi protest: Lawyers detained near Supreme Court</a></h3>
-                    <p class="card-desc">Delhi Police have detained many advocates who were protesting near the Supreme Court, said All India Lawyers Union’s Sanjay Kumar</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/cities/Delhi/delhi-protest-lawyers-detained-near-supreme-court/article71567395.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#4</span>
-                        <span class="card-src">The Hindu India</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/cities/Delhi/delhi-protest-daily-wage-workers-prevented-from-reaching-workplace/article71567421.ece" target="_blank" rel="noopener">Delhi protest: Daily wage workers prevented from reaching workplace</a></h3>
-                    <p class="card-desc">The labourers and workers, who are mostly employed in small shops or construction areas did not possess any valid identity cards and were unable to prove their identity to security personnel</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/cities/Delhi/delhi-protest-daily-wage-workers-prevented-from-reaching-workplace/article71567421.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#5</span>
-                        <span class="card-src">The Hindu India</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/national/kerala/gtech-to-seek-centres-intervention-as-us-green-card-curbs-hit-it-giants/article71567277.ece" target="_blank" rel="noopener">GTech to seek Centre’s intervention as U.S. Green Card curbs hit IT giants</a></h3>
-                    <p class="card-desc">The Ministry of External Affairs has since clarified that the suspension of PERM applications does not, by itself, affect the validity of existing H-1B visas or the status of H-1B visa holders and their dependants</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/national/kerala/gtech-to-seek-centres-intervention-as-us-green-card-curbs-hit-it-giants/article71567277.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-            </div>
-        </section>
-        
-        <section class="cat-section tab-national" data-category="world">
-            <div class="cat-head">
-                <h2>🌍 World News</h2>
-                <p>Major global developments & geopolitics</p>
-            </div>
-            <div class="card-grid">
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#1</span>
-                        <span class="card-src">The Hindu World</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/international/russian-attack-on-zaporizhzhia-kills-several-people-and-wounds-many/article71567296.ece" target="_blank" rel="noopener">Russian attack on Ukraine&#x27;s Zaporizhzhia kills seven, governor says</a></h3>
-                    <p class="card-desc">Ten others were ⁠wounded in the ‌attack, which the governor Mykhailo Semikin said hit ‌several locations ​at once in ⁠the early hours ⁠of October 10</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/international/russian-attack-on-zaporizhzhia-kills-several-people-and-wounds-many/article71567296.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#2</span>
-                        <span class="card-src">The Hindu World</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/national/starlink-row-musk-shares-reports-on-reliance-linked-firms-bjp-campaign-role-political-donations/article71567108.ece" target="_blank" rel="noopener">Starlink row: Musk shares reports on Reliance-linked firm&#x27;s BJP campaign role, political donations</a></h3>
-                    <p class="card-desc">The latest post comes amid Elon Musk&#x27;s scathing criticism of Mukesh Ambani over a persistent delay in the launch of Starlink satellite broadband services in India</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/national/starlink-row-musk-shares-reports-on-reliance-linked-firms-bjp-campaign-role-political-donations/article71567108.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#3</span>
-                        <span class="card-src">The Hindu World</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/international/taiwan-to-deter-war-by-boosting-defense-spending/article71567211.ece" target="_blank" rel="noopener">Taiwan&#x27;s leader says increasing defence spending to &#x27;deter war&#x27;</a></h3>
-                    <p class="card-desc">President Lai Ching-te’s government has earmarked a record NT$1.1 trillion ($34.5 billion) in defence spending for 2027, which accounts for more than 3% of GDP.</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/international/taiwan-to-deter-war-by-boosting-defense-spending/article71567211.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#4</span>
-                        <span class="card-src">The Hindu World</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/international/indian-lawyer-faces-rape-charges-in-uk/article71567214.ece" target="_blank" rel="noopener">Lawyer who represented Mehul Choksi faces rape charges in U.K.</a></h3>
-                    <p class="card-desc">The Crown Prosecution Service (CPS) referenced the new charges against the 57-year-old along with a charge of “arranging or facilitating travel of another person with a view to exploitation”.</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/international/indian-lawyer-faces-rape-charges-in-uk/article71567214.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-                <article class="news-card">
-                    <div class="card-meta">
-                        <span class="card-num">#5</span>
-                        <span class="card-src">The Hindu World</span>
-                    </div>
-                    <h3 class="card-title"><a href="https://www.thehindu.com/news/international/as-israel-goes-to-the-polls-settler-attacks-and-expansion-intensify-in-west-bank/article71564412.ece" target="_blank" rel="noopener">As Israel goes to the polls, settler attacks and expansion intensify in West Bank</a></h3>
-                    <p class="card-desc">More than 1,600 settler attacks against Palestinians recorded between January and August; over 1,000 Palestinians killed in the West Bank in the last four years; movement curbs, land seizures, demolitions have displaced thousands, while major parties show little interest in dismantling settlements</p>
-                    <div class="card-link">
-                        <a href="https://www.thehindu.com/news/international/as-israel-goes-to-the-polls-settler-attacks-and-expansion-intensify-in-west-bank/article71564412.ece" target="_blank" rel="noopener">Read story &rarr;</a>
-                    </div>
-                </article>
-                
-            </div>
-        </section>
-        
-        <section class="cat-section tab-trending" data-category="trending">
-            <div class="cat-head">
-                <h2>🔥 Trending & Worth Knowing</h2>
-                <p>Top viral, tech & web trends across India</p>
-            </div>
-            <div class="card-grid">
-                <p class="no-items">No recent news items found for this section in the last 24 hours.</p>
-            </div>
-        </section>
-        
+        </div>
 
-        <!-- Telegram Payload Box -->
-        <div class="payload-box">
-            <h3>💬 Automated Telegram Bot Payload (07:30 IST Target)</h3>
-            <pre class="code-block">☀️ &lt;b&gt;Coimbatore — 10 Oct 2026&lt;/b&gt;
-31.5°C now | High 31.8°C / Low 22.2°C
-Passing rain showers expected today. (73% chance of rain; carry an umbrella.)
-📅 Saturday, 10 October 2026
+        <div id="movies-container" class="cat-section tab-movies" data-category="movies" style="display: none;">
+            <div class="cat-head">
+                <h2>🎬 Trending Movies</h2>
+                <p>Top 10 Box Office Movies this week</p>
+            </div>
+            <div class="card-grid" id="movies-grid">
+                <div class="loader"></div> <span style="color:var(--text-sub); margin-left:10px;">Loading Movies...</span>
+            </div>
+        </div>
 
-🌍 &lt;b&gt;World&lt;/b&gt;
-1. &lt;a href=&quot;https://www.thehindu.com/news/international/russian-attack-on-zaporizhzhia-kills-several-people-and-wounds-many/article71567296.ece&quot;&gt;Russian attack on Ukraine&amp;#x27;s Zaporizhzhia kills seven, governor says&lt;/a&gt; — Ten others were ⁠wounded in the ‌attack, which the governor Mykhailo Semikin said hit ‌several locations ​at once i
-2. &lt;a href=&quot;https://www.thehindu.com/news/national/starlink-row-musk-shares-reports-on-reliance-linked-firms-bjp-campaign-role-political-donations/article71567108.ece&quot;&gt;Starlink row: Musk shares reports on Reliance-linked firm&amp;#x27;s BJP campaign role, political donati&lt;/a&gt; — The latest post comes amid Elon Musk&amp;#x27;s scathing criticism of Mukesh Ambani over a persistent delay in the launch of
-3. &lt;a href=&quot;https://www.thehindu.com/news/international/taiwan-to-deter-war-by-boosting-defense-spending/article71567211.ece&quot;&gt;Taiwan&amp;#x27;s leader says increasing defence spending to &amp;#x27;deter war&amp;#x27;&lt;/a&gt; — President Lai Ching-te’s government has earmarked a record NT$1.1 trillion ($34.5 billion) in defence spending for 
-🇮🇳 &lt;b&gt;India&lt;/b&gt;
-1. &lt;a href=&quot;https://www.thehindu.com/news/national/kerala/indias-first-cyber-trojan-horse-installation-at-c0c0n-2026-in-kochi/article71567411.ece&quot;&gt;India’s first cyber Trojan Horse garners eyeballs at security meet in Kochi&lt;/a&gt; — Titled The Trojan Project™, India’s first Cyber Trojan Horse, the 25-feet tall statue of a horse, weighing approxim
-2. &lt;a href=&quot;https://www.thehindu.com/news/cities/Delhi/cjp-protests-jantar-mantar-new-delhi-election-commissioner-gyanesh-kumar-resignation-sir-cec-row-october-10-2026-live-news/article71566021.ece&quot;&gt;Anti-CEC Delhi protest LIVE updates: Over 3,000 detained across Delhi; CJP&amp;#x27;s Ajinkya Shinde to &lt;/a&gt; — In a post on X, CJP said, &amp;quot;Until Abhijeet Dipke, Saurav Das and Ashutosh Ranka are in detention, CJP’s Organization
-3. &lt;a href=&quot;https://www.thehindu.com/news/cities/Delhi/delhi-protest-lawyers-detained-near-supreme-court/article71567395.ece&quot;&gt;Delhi protest: Lawyers detained near Supreme Court&lt;/a&gt; — Delhi Police have detained many advocates who were protesting near the Supreme Court, said All India Lawyers Union’
-🏛️ &lt;b&gt;Tamil Nadu&lt;/b&gt;
-1. &lt;a href=&quot;https://www.thehindu.com/news/cities/chennai/anti-cec-protest-over-100-aisf-aiyf-cadres-arrested-during-procession-in-chennai/article71567356.ece&quot;&gt;Anti-CEC protest: Over 100 AISF, AIYF cadres arrested during procession in Chennai&lt;/a&gt; — During the scuffle, a protester sustained a head injury and was taken to hospital for treatment
-2. &lt;a href=&quot;https://www.thehindu.com/news/national/tamil-nadu/tamil-nadu-cm-vijay-hails-tvks-bypoll-wins-as-victory-for-people-political-decorum/article71564000.ece&quot;&gt;Tamil Nadu CM Vijay hails TVK’s bypoll wins as victory for people, political decorum&lt;/a&gt; — In a statement on X, Mr. Vijay claimed the TVK had won without distributing money to voters or resorting to inducem
-3. &lt;a href=&quot;https://www.thehindu.com/news/national/tamil-nadu/no-surprises-in-byelection-results-in-tamil-nadu-and-puducherry-as-voters-favour-the-ruling-party-candidates/article71564070.ece&quot;&gt;No surprises in byelection results in Tamil Nadu and  Puducherry as voters favour the ruling pa&lt;/a&gt; — The Tamilaga Vettri Kazhagam bags the Madurantakam and Dharapuram (Reserved) Assembly constituencies. In Puducherry
-🏙️ &lt;b&gt;Coimbatore&lt;/b&gt;
-1. &lt;a href=&quot;https://www.thehindu.com/news/cities/Coimbatore/caste-discrimination-during-sc-mans-burial-commission-seeks-report-from-erode-collector-sp/article71567189.ece&quot;&gt;Caste discrimination during SC man’s burial: Commission seeks report from Erode Collector, SP&lt;/a&gt; — It also sought a report on disciplinary action taken against the police and Revenue Department officials who alleg...</pre>
+        <div id="astronomy-container" class="cat-section tab-astronomy" data-category="astronomy" style="display: none;">
+            <div class="cat-head">
+                <h2>🌌 Astronomy & Space</h2>
+                <p>Sunrise, sunset, and NASA's daily picture</p>
+            </div>
+            <div class="card-grid" id="astronomy-grid" style="grid-template-columns: 1fr;">
+                <div class="loader"></div> <span style="color:var(--text-sub); margin-left:10px;">Loading Astronomy...</span>
+            </div>
         </div>
 
         <footer>
-            <p>Morning Briefing Service — Live Yahoo Finance • Open-Meteo Weather • The Hindu • Moneycontrol • Google Trends</p>
+            <p>Dynamic Morning Briefing — Powered by FastAPI & Live APIs</p>
         </footer>
-
     </div>
 
     <script>
+        // Formatting numbers
+        const fNumber = (n) => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(n);
+
+        async function fetchWeather() {
+            try {
+                const res = await fetch('/api/weather');
+                const data = await res.json();
+                document.getElementById('weather-container').innerHTML = `
+                    <div class="cw-left">
+                        <span class="cw-temp">${data.current_temp}°C</span>
+                        <div>
+                            <div class="cw-desc">☀️ Coimbatore Weather</div>
+                            <div style="font-size: 0.8rem; color: var(--text-sub);">${data.weather_line}</div>
+                        </div>
+                    </div>
+                    <div class="cw-stats">
+                        <span>High: <strong>${data.max_temp}°C</strong></span>
+                        <span>Low: <strong>${data.min_temp}°C</strong></span>
+                        <span>Humidity: <strong>${data.humidity}%</strong></span>
+                    </div>
+                `;
+            } catch (err) {
+                console.error("Weather error:", err);
+                document.getElementById('weather-container').innerHTML = `<p style="color:red">Failed to load weather data.</p>`;
+            }
+        }
+
+        async function fetchMarkets() {
+            try {
+                const res = await fetch('/api/markets');
+                const data = await res.json();
+                let html = '';
+                data.forEach(m => {
+                    const badgeCls = m.is_up ? 'up' : 'down';
+                    const sign = m.change > 0 ? '+' : '';
+                    html += `
+                    <div class="ticker-card ${badgeCls}">
+                        <div class="ticker-top">
+                            <span class="ticker-name">${m.name || m.symbol}</span>
+                            <span class="ticker-badge">${sign}${m.pct_change.toFixed(2)}%</span>
+                        </div>
+                        <div class="ticker-price">${fNumber(m.price)} <span class="ticker-chg">${sign}${fNumber(m.change)}</span></div>
+                    </div>`;
+                });
+                document.getElementById('ticker-container').innerHTML = html;
+            } catch (err) {
+                console.error("Markets error:", err);
+                document.getElementById('ticker-container').innerHTML = `<p style="color:red; padding: 10px;">Failed to load markets.</p>`;
+            }
+        }
+
+        const catMeta = {
+            "markets": ["📈 Markets & Economy", "Nifty 50, Sensex, global stocks", "tab-markets"],
+            "coimbatore": ["🏙️ Coimbatore Local", "Civic issues, infrastructure", "tab-local"],
+            "tamil_nadu": ["🏛️ Tamil Nadu State", "State governance & policy", "tab-local"],
+            "india": ["🇮🇳 India National", "Top national stories", "tab-national"],
+            "world": ["🌍 World News", "Major global developments", "tab-national"],
+            "trending": ["🔥 Trending", "Top viral, tech & web trends", "tab-trending"],
+        };
+
+        async function fetchNews() {
+            try {
+                const res = await fetch('/api/news');
+                const data = await res.json();
+                let html = '';
+                
+                for (const [catKey, meta] of Object.entries(catMeta)) {
+                    const items = data[catKey] || [];
+                    let itemsHtml = '';
+                    
+                    if (items.length === 0) {
+                        itemsHtml = '<p class="no-items">No news items found.</p>';
+                    } else {
+                        // Limit to 5 for fast UI
+                        items.slice(0, 5).forEach((item, idx) => {
+                            const title = item.title || "No Title";
+                            const summary = item.summary || title;
+                            const source = item.source || "News";
+                            const url = item.url || "#";
+                            
+                            itemsHtml += `
+                            <article class="news-card">
+                                <div class="card-meta">
+                                    <span class="card-num">#${idx + 1}</span>
+                                    <span class="card-src">${source}</span>
+                                </div>
+                                <h3 class="card-title"><a href="${url}" target="_blank" rel="noopener">${title}</a></h3>
+                                <p class="card-desc">${summary}</p>
+                                <div class="card-link"><a href="${url}" target="_blank" rel="noopener">Read story &rarr;</a></div>
+                            </article>`;
+                        });
+                    }
+
+                    html += `
+                    <section class="cat-section ${meta[2]}" data-category="${catKey}">
+                        <div class="cat-head">
+                            <h2>${meta[0]}</h2>
+                            <p>${meta[1]}</p>
+                        </div>
+                        <div class="card-grid">
+                            ${itemsHtml}
+                        </div>
+                    </section>`;
+                }
+                
+                document.getElementById('news-container').innerHTML = html;
+            } catch (err) {
+                console.error("News error:", err);
+                document.getElementById('news-container').innerHTML = `<p style="color:red">Failed to load news.</p>`;
+            }
+        }
+
         function filterCategory(cat, btn) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -819,6 +341,10 @@ Passing rain showers expected today. (73% chance of rain; carry an umbrella.)
                     sec.style.display = 'block';
                 } else if (cat === 'india' && (secCat === 'india' || secCat === 'world')) {
                     sec.style.display = 'block';
+                } else if (cat === 'astronomy' && secCat === 'astronomy') {
+                    sec.style.display = 'block';
+                } else if (cat === 'movies' && secCat === 'movies') {
+                    sec.style.display = 'block';
                 } else if (secCat === cat) {
                     sec.style.display = 'block';
                 } else {
@@ -826,7 +352,85 @@ Passing rain showers expected today. (73% chance of rain; carry an umbrella.)
                 }
             });
         }
-    </script>
 
+        async function fetchMovies() {
+            try {
+                const res = await fetch('/api/movies');
+                const data = await res.json();
+                let html = '';
+                const entries = data.feed.entry || [];
+                entries.forEach((item, idx) => {
+                    const title = item['im:name']?.label || 'Movie';
+                    const summary = item.summary?.label || 'No summary available';
+                    const img = item['im:image'] ? item['im:image'][2]?.label : '';
+                    const link = item.link ? item.link[0]?.attributes?.href : '#';
+                    
+                    html += `
+                    <article class="news-card">
+                        <div class="card-meta">
+                            <span class="card-num">#${idx + 1}</span>
+                            <span class="card-src">iTunes Box Office</span>
+                        </div>
+                        <h3 class="card-title"><a href="${link}" target="_blank" rel="noopener">${title}</a></h3>
+                        ${img ? `<img src="${img}" alt="${title}" style="width:100%; border-radius:8px; margin-bottom:12px; height:200px; object-fit:cover;">` : ''}
+                        <p class="card-desc" style="-webkit-line-clamp:3;">${summary}</p>
+                    </article>`;
+                });
+                document.getElementById('movies-grid').innerHTML = html || '<p>No movies found.</p>';
+            } catch (err) {
+                console.error("Movies error:", err);
+                document.getElementById('movies-grid').innerHTML = `<p style="color:red">Failed to load movies.</p>`;
+            }
+        }
+
+        async function fetchAstronomy() {
+            try {
+                const res = await fetch('/api/astronomy');
+                const data = await res.json();
+                let html = '';
+                
+                // Sunrise/Sunset
+                const sun = data.sun?.results;
+                if (sun) {
+                    html += `
+                    <article class="news-card" style="margin-bottom: 16px;">
+                        <h3 class="card-title">☀️ Coimbatore Sun Cycle</h3>
+                        <p class="card-desc"><strong>Sunrise:</strong> ${sun.sunrise}</p>
+                        <p class="card-desc"><strong>Sunset:</strong> ${sun.sunset}</p>
+                        <p class="card-desc"><strong>Day Length:</strong> ${sun.day_length}</p>
+                    </article>`;
+                }
+                
+                // NASA
+                const nasa = data.nasa;
+                if (nasa && nasa.url) {
+                    html += `
+                    <article class="news-card">
+                        <div class="card-meta">
+                            <span class="card-num">NASA</span>
+                            <span class="card-src">Astronomy Picture of the Day</span>
+                        </div>
+                        <h3 class="card-title"><a href="${nasa.url}" target="_blank" rel="noopener">${nasa.title}</a></h3>
+                        ${nasa.media_type === 'image' ? `<img src="${nasa.url}" alt="${nasa.title}" style="width:100%; border-radius:8px; margin-bottom:12px; height:auto;">` : ''}
+                        <p class="card-desc" style="-webkit-line-clamp:none;">${nasa.explanation}</p>
+                    </article>`;
+                }
+                
+                document.getElementById('astronomy-grid').innerHTML = html || '<p>No astronomy data found.</p>';
+            } catch (err) {
+                console.error("Astronomy error:", err);
+                document.getElementById('astronomy-grid').innerHTML = `<p style="color:red">Failed to load astronomy.</p>`;
+            }
+        }
+
+        // Initialize fetches on load
+        window.onload = () => {
+            fetchWeather();
+            fetchMarkets();
+            fetchNews();
+            fetchMovies();
+            fetchAstronomy();
+        };
+    </script>
 </body>
 </html>
