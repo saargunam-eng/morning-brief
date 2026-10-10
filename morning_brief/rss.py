@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import re
 from datetime import datetime, timedelta, timezone
 from time import mktime
 from typing import Dict, List, Tuple
@@ -73,7 +74,8 @@ async def fetch_single_feed(
             summary = entry.get("summary", entry.get("description", "")).strip()
 
             # Clean HTML tags from summary if present
-            summary = feedparser.sanitizer._strip_html(summary) if summary else ""
+            if summary:
+                summary = re.sub(r"<[^>]+>", "", summary).strip()
             if len(summary) > 300:
                 summary = summary[:297] + "..."
 

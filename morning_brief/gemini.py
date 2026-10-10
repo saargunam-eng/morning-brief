@@ -1,7 +1,7 @@
 import json
 import logging
 import re
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional, Set, Tuple
 import httpx
 
 logger = logging.getLogger("morning_brief.gemini")

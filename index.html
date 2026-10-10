@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morning Brief — Coimbatore Personal News & Weather</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-blue: #38bdf8;
+            --accent-orange: #fb923c;
+            --accent-green: #4ade80;
+            --accent-purple: #c084fc;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+            border-bottom: 1px solid var(--card-border);
+            padding: 40px 20px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-blue);
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #f8fafc, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+        }
+
+        .time-bar {
+            font-size: 0.95rem;
+            color: var(--accent-orange);
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Weather Section */
+        .weather-banner {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(192, 132, 252, 0.1) 100%);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 16px;
+            padding: 25px 30px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .weather-info h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.6rem;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .weather-desc {
+            color: var(--accent-blue);
+            font-weight: 500;
+            font-size: 1.05rem;
+        }
+
+        .weather-stats {
+            display: flex;
+            gap: 25px;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 10px 15px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-box .val {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-orange);
+        }
+
+        .stat-box .lbl {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Category Section */
+        .category-block {
+            margin-bottom: 45px;
+        }
+
+        .category-header {
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent-blue);
+            padding-left: 14px;
+        }
+
+        .category-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            color: var(--text-main);
+        }
+
+        .category-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .news-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .news-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-blue);
+        }
+
+        .news-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .news-index {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+
+        .news-source {
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .news-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+
+        .news-title a {
+            color: var(--text-main);
+            text-decoration: none;
+        }
+
+        .news-title a:hover {
+            color: var(--accent-blue);
+        }
+
+        .news-summary {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .news-footer {
+            margin-top: auto;
+            text-align: right;
+        }
+
+        .read-more {
+            font-size: 0.85rem;
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .read-more:hover {
+            text-decoration: underline;
+        }
+
+        /* Telegram Preview Box */
+        .telegram-preview-box {
+            background: #090d16;
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 50px;
+        }
+
+        .telegram-preview-box h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3rem;
+            color: var(--accent-green);
+            margin-bottom: 15px;
+        }
+
+        pre.telegram-code {
+            background: #030712;
+            color: #38bdf8;
+            padding: 18px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border: 1px solid #1f2937;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 20px 0;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--card-border);
+            margin-top: 40px;
+        }
+
+        .no-items {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.1rem; }
+            .weather-banner { flex-direction: column; gap: 20px; text-align: center; }
+            .news-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <span class="badge">☀️ Daily Personal News Briefing — v1.0</span>
+            <h1>Morning Brief: Coimbatore</h1>
+            <p class="subtitle">Curated News & Real-Time Weather Digest</p>
+            <p class="time-bar">Updated Live: 10 October 2026 at 01:21 PM IST</p>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- Weather Banner -->
+        <section class="weather-banner">
+            <div class="weather-info">
+                <h3>☀️ Coimbatore Weather Forecast</h3>
+                <p class="weather-desc">Rain showers likely later today; carry an umbrella.</p>
+            </div>
+            <div class="weather-stats">
+                <div class="stat-box">
+                    <div class="val">33.3°C</div>
+                    <div class="lbl">Now</div>
+                </div>
+                <div class="stat-box">
+                    <div class="val">33.4°C</div>
+                    <div class="lbl">High</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box">
+                    <div class="val">22.7°C</div>
+                    <div class="lbl">Low</div>
+                </div>
+                <div class="stat-box">
+                    <div class="val">48%</div>
+                    <div class="lbl">Humidity</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- News Categories -->
+        
+        <section class="category-block" id="world">
+            <div class="category-header">
+                <h2>🌍 World News</h2>
+                <p>Major global developments & international affairs</p>
+            </div>
+            <div class="news-grid">
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#1</span>
+                        <span class="news-source">The Hindu World</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/international/russian-attack-on-zaporizhzhia-kills-several-people-and-wounds-many/article71567296.ece" target="_blank" rel="noopener">Russian attack on Ukraine&#x27;s Zaporizhzhia kills seven, governor says</a></h3>
+                    <p class="news-summary">Ten others were ⁠wounded in the ‌attack, which the governor Mykhailo Semikin said hit ‌several locations ​at once in ⁠the early hours ⁠of October 10</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/international/russian-attack-on-zaporizhzhia-kills-several-people-and-wounds-many/article71567296.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#2</span>
+                        <span class="news-source">The Hindu World</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/national/starlink-row-musk-shares-reports-on-reliance-linked-firms-bjp-campaign-role-political-donations/article71567108.ece" target="_blank" rel="noopener">Starlink row: Musk shares reports on Reliance-linked firm&#x27;s BJP campaign role, political donations</a></h3>
+                    <p class="news-summary">The latest post comes amid Elon Musk&#x27;s scathing criticism of Mukesh Ambani over a persistent delay in the launch of Starlink satellite broadband services in India</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/national/starlink-row-musk-shares-reports-on-reliance-linked-firms-bjp-campaign-role-political-donations/article71567108.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#3</span>
+                        <span class="news-source">The Hindu World</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/international/taiwan-to-deter-war-by-boosting-defense-spending/article71567211.ece" target="_blank" rel="noopener">Taiwan&#x27;s leader says increasing defence spending to &#x27;deter war&#x27;</a></h3>
+                    <p class="news-summary">President Lai Ching-te’s government has earmarked a record NT$1.1 trillion ($34.5 billion) in defence spending for 2027, which accounts for more than 3% of GDP.</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/international/taiwan-to-deter-war-by-boosting-defense-spending/article71567211.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#4</span>
+                        <span class="news-source">The Hindu World</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/international/indian-lawyer-faces-rape-charges-in-uk/article71567214.ece" target="_blank" rel="noopener">Lawyer who represented Mehul Choksi faces rape charges in U.K.</a></h3>
+                    <p class="news-summary">The Crown Prosecution Service (CPS) referenced the new charges against the 57-year-old along with a charge of “arranging or facilitating travel of another person with a view to exploitation”.</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/international/indian-lawyer-faces-rape-charges-in-uk/article71567214.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#5</span>
+                        <span class="news-source">The Hindu World</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/international/as-israel-goes-to-the-polls-settler-attacks-and-expansion-intensify-in-west-bank/article71564412.ece" target="_blank" rel="noopener">As Israel goes to the polls, settler attacks and expansion intensify in West Bank</a></h3>
+                    <p class="news-summary">More than 1,600 settler attacks against Palestinians recorded between January and August; over 1,000 Palestinians killed in the West Bank in the last four years; movement curbs, land seizures, demolitions have displaced thousands, while major parties show little interest in dismantling settlements</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/international/as-israel-goes-to-the-polls-settler-attacks-and-expansion-intensify-in-west-bank/article71564412.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#6</span>
+                        <span class="news-source">The Hindu World</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/international/lulas-government-in-brazil-lowers-fuel-prices-ahead-of-runoff-vote-against-flavio-bolsonaro/article71567143.ece" target="_blank" rel="noopener">Lula’s government in Brazil lowers fuel prices ahead of runoff vote against Flavio Bolsonaro</a></h3>
+                    <p class="news-summary">A new decree eliminates federal taxes on the import and sale of gasoline for 30 days, with the possibility of an extension</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/international/lulas-government-in-brazil-lowers-fuel-prices-ahead-of-runoff-vote-against-flavio-bolsonaro/article71567143.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+            </div>
+        </section>
+        
+        <section class="category-block" id="india">
+            <div class="category-header">
+                <h2>🇮🇳 India National</h2>
+                <p>Top national stories, policy & national economy</p>
+            </div>
+            <div class="news-grid">
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#1</span>
+                        <span class="news-source">The Hindu India</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/cities/Delhi/cjp-protests-jantar-mantar-new-delhi-election-commissioner-gyanesh-kumar-resignation-sir-cec-row-october-10-2026-live-news/article71566021.ece" target="_blank" rel="noopener">Anti-CEC Delhi protest LIVE updates: Over 3,000 detained across Delhi; CJP&#x27;s Ajinkya Shinde to lead protest</a></h3>
+                    <p class="news-summary">Delhi Police have denied permission for the Jantar Mantar protest, citing breach of past undertaking; restrictions in place include internet curbs in parts of Delhi, shutting down of Metro stations, and cancellations of trains bound for the capital</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/cities/Delhi/cjp-protests-jantar-mantar-new-delhi-election-commissioner-gyanesh-kumar-resignation-sir-cec-row-october-10-2026-live-news/article71566021.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#2</span>
+                        <span class="news-source">The Hindu India</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/national/gyanesh-kumar-will-go-this-government-will-go-rahul-gandhi/article71567234.ece" target="_blank" rel="noopener">‘Gyanesh Kumar will go, this government will go’: Rahul Gandhi</a></h3>
+                    <p class="news-summary">Rahul Gandhi said the repair of democracy will begin once the CEC and the Modi government are gone, a day after telling INDIA bloc MPs the government would fall if the Opposition kept up its push</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/national/gyanesh-kumar-will-go-this-government-will-go-rahul-gandhi/article71567234.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#3</span>
+                        <span class="news-source">The Hindu India</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/national/jammu-and-kashmir/100-senior-police-officers-transferred-in-jk/article71567370.ece" target="_blank" rel="noopener">100 senior police officers transferred in J&amp;K</a></h3>
+                    <p class="news-summary">Lieutenant Governor Manoj Sinha ordered the transfer, including 28 IPS officers, with several districts and police districts getting new chiefs</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/national/jammu-and-kashmir/100-senior-police-officers-transferred-in-jk/article71567370.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#4</span>
+                        <span class="news-source">The Hindu India</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/national/bjp-govt-will-deal-with-anarchists-sternly-nitin-nabin-warns-rahul-gandhi-kejriwal-and-cjp/article71567260.ece" target="_blank" rel="noopener">BJP govt will deal with ‘anarchists’ sternly: Nitin Nabin warns Rahul Gandhi, Kejriwal and CJP</a></h3>
+                    <p class="news-summary">Nitin Nabin alleged that Rahul Gandhi, Arvind Kejriwal and the Cockroach Janata Party (CJP) are resorting to create anarchy because they “cannot digest the country&#x27;s progress” under Prime MInister Narendra Modi&#x27;s leadership</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/national/bjp-govt-will-deal-with-anarchists-sternly-nitin-nabin-warns-rahul-gandhi-kejriwal-and-cjp/article71567260.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#5</span>
+                        <span class="news-source">The Hindu India</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/cities/Delhi/cec-gyanesh-kumar-protest-delhi-abhijeet-dipke-saurav-das-cjp-leaders-detained-updates/article71567192.ece" target="_blank" rel="noopener">Delhi protest: CJP’s Abhijeet Dipke, Saurav Das, Ashutosh Ranka, Ratna Singh detained</a></h3>
+                    <p class="news-summary">This pre-planned interception by the Delhi Police aims to cripple the leadership of today’s peaceful demonstrations before they even reach the protest site, reads the CJP statement</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/cities/Delhi/cec-gyanesh-kumar-protest-delhi-abhijeet-dipke-saurav-das-cjp-leaders-detained-updates/article71567192.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#6</span>
+                        <span class="news-source">The Hindu India</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/national/kerala/operation-thelima-makes-headway-in-kozhikode-district/article71567330.ece" target="_blank" rel="noopener">‘Operation Thelima’ makes headway in Kozhikode district</a></h3>
+                    <p class="news-summary">Poor handling practices have also been found to increase the risk of contamination by bacteria such as E. coli and Salmonella, which can cause serious illnes</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/national/kerala/operation-thelima-makes-headway-in-kozhikode-district/article71567330.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+            </div>
+        </section>
+        
+        <section class="category-block" id="tamil_nadu">
+            <div class="category-header">
+                <h2>🏛️ Tamil Nadu State</h2>
+                <p>State government news, regional policies & events</p>
+            </div>
+            <div class="news-grid">
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#1</span>
+                        <span class="news-source">The Hindu Tamil Nadu</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/cities/chennai/anti-cec-protest-over-100-aisf-aiyf-cadres-arrested-during-procession-in-chennai/article71567356.ece" target="_blank" rel="noopener">Anti-CEC protest: Over 100 AISF, AIYF cadres arrested during procession in Chennai</a></h3>
+                    <p class="news-summary">During the scuffle, a protester sustained a head injury and was taken to hospital for treatment</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/cities/chennai/anti-cec-protest-over-100-aisf-aiyf-cadres-arrested-during-procession-in-chennai/article71567356.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#2</span>
+                        <span class="news-source">The Hindu Tamil Nadu</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/national/tamil-nadu/tamil-nadu-cm-vijay-hails-tvks-bypoll-wins-as-victory-for-people-political-decorum/article71564000.ece" target="_blank" rel="noopener">Tamil Nadu CM Vijay hails TVK’s bypoll wins as victory for people, political decorum</a></h3>
+                    <p class="news-summary">In a statement on X, Mr. Vijay claimed the TVK had won without distributing money to voters or resorting to inducements</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/national/tamil-nadu/tamil-nadu-cm-vijay-hails-tvks-bypoll-wins-as-victory-for-people-political-decorum/article71564000.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#3</span>
+                        <span class="news-source">The Hindu Tamil Nadu</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/national/tamil-nadu/no-surprises-in-byelection-results-in-tamil-nadu-and-puducherry-as-voters-favour-the-ruling-party-candidates/article71564070.ece" target="_blank" rel="noopener">No surprises in byelection results in Tamil Nadu and  Puducherry as voters favour the ruling party candidates</a></h3>
+                    <p class="news-summary">The Tamilaga Vettri Kazhagam bags the Madurantakam and Dharapuram (Reserved) Assembly constituencies. In Puducherry, the All India N.R. Congress retains Thattanchavady</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/national/tamil-nadu/no-surprises-in-byelection-results-in-tamil-nadu-and-puducherry-as-voters-favour-the-ruling-party-candidates/article71564070.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#4</span>
+                        <span class="news-source">The Hindu Tamil Nadu</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/national/tamil-nadu/byelection-outcome-a-temporary-victory-for-politics-of-betrayal-says-stalin/article71564172.ece" target="_blank" rel="noopener">Byelection outcome a ‘temporary victory for politics of betrayal’, says Stalin</a></h3>
+                    <p class="news-summary">He says the votes polled by the parties that contested against the ruling TVK shows that it has been rejected by a majority of voters</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/national/tamil-nadu/byelection-outcome-a-temporary-victory-for-politics-of-betrayal-says-stalin/article71564172.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#5</span>
+                        <span class="news-source">The Hindu Tamil Nadu</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/national/tamil-nadu/tvk-allies-hail-byelection-victory-says-its-an-endorsement-of-governments-performance/article71564417.ece" target="_blank" rel="noopener">TVK allies hail byelection victory, says its an endorsement of government’s performance</a></h3>
+                    <p class="news-summary">Alliance leaders including Thirumavalavan and Manickam Tagore congratulate the party on its electoral success</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/national/tamil-nadu/tvk-allies-hail-byelection-victory-says-its-an-endorsement-of-governments-performance/article71564417.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#6</span>
+                        <span class="news-source">The Hindu Tamil Nadu</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/national/tamil-nadu/aiadmk-likely-to-face-another-crisis-after-decline-in-vote-share/article71564813.ece" target="_blank" rel="noopener">AIADMK likely to face another crisis after decline in vote share</a></h3>
+                    <p class="news-summary">Following AIADMK’s recent setback in the Madurantakam and Dharapuram bypoll, detractors may raise questions about Edappadi K. Palaniswami’s leadership around the time of the party’s Foundation Day on October 17</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/national/tamil-nadu/aiadmk-likely-to-face-another-crisis-after-decline-in-vote-share/article71564813.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+            </div>
+        </section>
+        
+        <section class="category-block" id="coimbatore">
+            <div class="category-header">
+                <h2>🏙️ Coimbatore Local</h2>
+                <p>Civic issues, local infrastructure, power & water updates</p>
+            </div>
+            <div class="news-grid">
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#1</span>
+                        <span class="news-source">The Hindu Coimbatore</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/cities/Coimbatore/caste-discrimination-during-sc-mans-burial-commission-seeks-report-from-erode-collector-sp/article71567189.ece" target="_blank" rel="noopener">Caste discrimination during SC man’s burial: Commission seeks report from Erode Collector, SP</a></h3>
+                    <p class="news-summary">It also sought a report on disciplinary action taken against the police and Revenue Department officials who allegedly failed to take preventive measures during the incident</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/cities/Coimbatore/caste-discrimination-during-sc-mans-burial-commission-seeks-report-from-erode-collector-sp/article71567189.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#2</span>
+                        <span class="news-source">The Hindu Coimbatore</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/national/tamil-nadu/tvks-bypoll-wins-a-verdict-on-four-months-of-good-governance-minister-arunraj/article71567203.ece" target="_blank" rel="noopener">TVK’s bypoll victories a verdict on four months of good governance: Minister Arunraj</a></h3>
+                    <p class="news-summary">On the protest by mid-level health workers, K.G. Arunraj said they should have submitted their demands to him or the Health Department Secretary before resorting to agitation</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/national/tamil-nadu/tvks-bypoll-wins-a-verdict-on-four-months-of-good-governance-minister-arunraj/article71567203.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#3</span>
+                        <span class="news-source">The Hindu Coimbatore</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/cities/Coimbatore/p-sathyabama-elected-in-dharapuram-trumps-dmk-rival-by-9471-votes/article71565107.ece" target="_blank" rel="noopener">P. Sathyabama elected in Dharapuram, trumps DMK rival by 9,471 votes</a></h3>
+                    <p class="news-summary">Speaking to mediapersons, the TVK candidate the verdict has proven that the people are in favour of the TVK-led government, and they had dismissed ‘propaganda’ that the opposition had spread about her</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/cities/Coimbatore/p-sathyabama-elected-in-dharapuram-trumps-dmk-rival-by-9471-votes/article71565107.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#4</span>
+                        <span class="news-source">The Hindu Coimbatore</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/cities/Coimbatore/protest-staged-against-construction-of-compound-wall-for-coimbatore-airport/article71565429.ece" target="_blank" rel="noopener">Protest staged against construction of compound wall for Coimbatore airport</a></h3>
+                    <p class="news-summary">Protest staged against construction of compound wall for Coimbatore airport</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/cities/Coimbatore/protest-staged-against-construction-of-compound-wall-for-coimbatore-airport/article71565429.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#5</span>
+                        <span class="news-source">The Hindu Coimbatore</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/national/byelection-bypoll-results-nandigram-rejinagar-madurantakam-dharapuram-thattanchavady-nagaon-live-updates-october-9-2026/article71562394.ece" target="_blank" rel="noopener">Bypoll results highlights: BJP-NDA&#x27;s victory in bypolls shows people have &#x27;deep-rooted connect&#x27; with alliance, says PM Modi</a></h3>
+                    <p class="news-summary">Ruling parties sweep bypolls in three States, Puducherry. BJP makes surprise gains in Muslim-majority Rejinagar in West Bengal; TVK wins Dharapuram in Tamil Nadu. In Puducherry, Chief Minister Rangasamy&#x27;s AINRC wins</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/national/byelection-bypoll-results-nandigram-rejinagar-madurantakam-dharapuram-thattanchavady-nagaon-live-updates-october-9-2026/article71562394.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+                <article class="news-card">
+                    <div class="news-header">
+                        <span class="news-index">#6</span>
+                        <span class="news-source">The Hindu Coimbatore</span>
+                    </div>
+                    <h3 class="news-title"><a href="https://www.thehindu.com/news/national/tamil-nadu/tamil-nadu-bypoll-results-tvk-madurantakam-dharapuram-constituencies/article71563406.ece" target="_blank" rel="noopener">Tamil Nadu bypoll results: TVK bags Madurantakam, Dharapuram seats</a></h3>
+                    <p class="news-summary">The bypolls in the two constituencies were necessitated after Maragatham Kumaravel and P. Sathyabama, who had won the Madurantakam and Dharapuram seats, respectively, as AIADMK candidates in the 2026 Assembly elections, resigned as MLAs and joined the ruling TVK</p>
+                    <div class="news-footer">
+                        <a href="https://www.thehindu.com/news/national/tamil-nadu/tamil-nadu-bypoll-results-tvk-madurantakam-dharapuram-constituencies/article71563406.ece" target="_blank" rel="noopener" class="read-more">Read full story &rarr;</a>
+                    </div>
+                </article>
+                
+            </div>
+        </section>
+        
+
+        <!-- Telegram Format Preview -->
+        <section class="telegram-preview-box">
+            <h3>💬 Live Telegram Message Payload Preview (HTML Mode)</h3>
+            <p style="color: var(--text-muted); margin-bottom: 12px; font-size: 0.9rem;">
+                This is the exact string payload delivered to your Telegram Bot every morning at 07:30 IST:
+            </p>
+            <pre class="telegram-code">☀️ &lt;b&gt;Coimbatore — 10 Oct 2026&lt;/b&gt;
+33.3°C now | High 33.4°C / Low 22.7°C
+Rain showers likely later today; carry an umbrella.
+📅 Saturday, 10 October 2026
+
+🌍 &lt;b&gt;World&lt;/b&gt;
+1. &lt;a href=&quot;https://www.thehindu.com/news/international/russian-attack-on-zaporizhzhia-kills-several-people-and-wounds-many/article71567296.ece&quot;&gt;Russian attack on Ukraine&amp;#x27;s Zaporizhzhia kills seven, governor says&lt;/a&gt; — Ten others were ⁠wounded in the ‌attack, which the governor Mykhailo Semikin said hit ‌several locations ​at once i
+2. &lt;a href=&quot;https://www.thehindu.com/news/national/starlink-row-musk-shares-reports-on-reliance-linked-firms-bjp-campaign-role-political-donations/article71567108.ece&quot;&gt;Starlink row: Musk shares reports on Reliance-linked firm&amp;#x27;s BJP campaign role, political donati&lt;/a&gt; — The latest post comes amid Elon Musk&amp;#x27;s scathing criticism of Mukesh Ambani over a persistent delay in the launch of
+3. &lt;a href=&quot;https://www.thehindu.com/news/international/taiwan-to-deter-war-by-boosting-defense-spending/article71567211.ece&quot;&gt;Taiwan&amp;#x27;s leader says increasing defence spending to &amp;#x27;deter war&amp;#x27;&lt;/a&gt; — President Lai Ching-te’s government has earmarked a record NT$1.1 trillion ($34.5 billion) in defence spending for 
+🇮🇳 &lt;b&gt;India&lt;/b&gt;
+1. &lt;a href=&quot;https://www.thehindu.com/news/cities/Delhi/cjp-protests-jantar-mantar-new-delhi-election-commissioner-gyanesh-kumar-resignation-sir-cec-row-october-10-2026-live-news/article71566021.ece&quot;&gt;Anti-CEC Delhi protest LIVE updates: Over 3,000 detained across Delhi; CJP&amp;#x27;s Ajinkya Shinde to &lt;/a&gt; — Delhi Police have denied permission for the Jantar Mantar protest, citing breach of past undertaking; restrictions 
+2. &lt;a href=&quot;https://www.thehindu.com/news/national/gyanesh-kumar-will-go-this-government-will-go-rahul-gandhi/article71567234.ece&quot;&gt;‘Gyanesh Kumar will go, this government will go’: Rahul Gandhi&lt;/a&gt; — Rahul Gandhi said the repair of democracy will begin once the CEC and the Modi government are gone, a day after tel
+3. &lt;a href=&quot;https://www.thehindu.com/news/national/jammu-and-kashmir/100-senior-police-officers-transferred-in-jk/article71567370.ece&quot;&gt;100 senior police officers transferred in J&amp;amp;K&lt;/a&gt; — Lieutenant Governor Manoj Sinha ordered the transfer, including 28 IPS officers, with several districts and police 
+🏛️ &lt;b&gt;Tamil Nadu&lt;/b&gt;
+1. &lt;a href=&quot;https://www.thehindu.com/news/cities/chennai/anti-cec-protest-over-100-aisf-aiyf-cadres-arrested-during-procession-in-chennai/article71567356.ece&quot;&gt;Anti-CEC protest: Over 100 AISF, AIYF cadres arrested during procession in Chennai&lt;/a&gt; — During the scuffle, a protester sustained a head injury and was taken to hospital for treatment
+2. &lt;a href=&quot;https://www.thehindu.com/news/national/tamil-nadu/tamil-nadu-cm-vijay-hails-tvks-bypoll-wins-as-victory-for-people-political-decorum/article71564000.ece&quot;&gt;Tamil Nadu CM Vijay hails TVK’s bypoll wins as victory for people, political decorum&lt;/a&gt; — In a statement on X, Mr. Vijay claimed the TVK had won without distributing money to voters or resorting to inducem
+3. &lt;a href=&quot;https://www.thehindu.com/news/national/tamil-nadu/no-surprises-in-byelection-results-in-tamil-nadu-and-puducherry-as-voters-favour-the-ruling-party-candidates/article71564070.ece&quot;&gt;No surprises in byelection results in Tamil Nadu and  Puducherry as voters favour the ruling pa&lt;/a&gt; — The Tamilaga Vettri Kazhagam bags the Madurantakam and Dharapuram (Reserved) Assembly constituencies. In Puducherry
+🏙️ &lt;b&gt;Coimbatore&lt;/b&gt;
+1. &lt;a href=&quot;https://www.thehindu.com/news/cities/Coimbatore/caste-discrimination-during-sc-mans-burial-commission-seeks-report-from-erode-collector-sp/article71567189.ece&quot;&gt;Caste discrimination during SC man’s burial: Commission seeks report from Erode Collector, SP&lt;/a&gt; — It also sought a report on disciplinary action taken against the police and Revenue Department officials who allege
+2. &lt;a href=&quot;https://www.thehindu.com/news/national...</pre>
+        </section>
+
+        <footer>
+            <p>Morning Brief Project — Powered by Open-Meteo Weather API, The Hindu RSS & Google News RSS</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
